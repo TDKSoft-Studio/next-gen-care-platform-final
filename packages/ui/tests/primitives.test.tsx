@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { ErrorSummary, LanguageSwitcher, SkipLink } from "../src/index";
+import { ErrorSummary, LanguageSwitcher, MainNav, SkipLink } from "../src/index";
 
 describe("accessible UI primitives", () => {
   it("provides a main-content bypass link", () => {
@@ -25,6 +25,20 @@ describe("accessible UI primitives", () => {
     );
     expect(screen.getByRole("link", { name: "Français" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Nederlands" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("marks the current section in the primary navigation without relying on color", () => {
+    render(
+      <MainNav
+        label="Main"
+        items={[
+          { current: true, href: "/fr/home-care", label: "Home care" },
+          { href: "/fr/well-being", label: "Well-being" }
+        ]}
+      />
+    );
+    expect(screen.getByRole("link", { name: "Home care" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Well-being" })).not.toHaveAttribute("aria-current");
   });
 
   it("links every summarized error back to its field", () => {

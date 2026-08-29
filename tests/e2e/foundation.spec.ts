@@ -25,6 +25,28 @@ test("preserves an equivalent page when switching language", async ({ page }) =>
   await expect(page.locator("html")).toHaveAttribute("lang", "nl");
 });
 
+test("navigates from the primary nav to a business-domain placeholder page", async ({ page }) => {
+  await page.goto("/fr");
+  await page
+    .getByRole("navigation", { name: "Navigation principale" })
+    .getByRole("link", { name: "Soins à domicile" })
+    .click();
+
+  await expect(page).toHaveURL(/\/fr\/home-care$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Soins à domicile");
+  await expect(page.getByRole("note")).toContainText("aucun contenu métier");
+});
+
+test("has no automatically detectable violations on a business-domain placeholder page", async ({
+  page
+}) => {
+  await page.goto("/fr/home-care");
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test("supports a keyboard skip link", async ({ page }) => {
   await page.goto("/fr");
   await page.keyboard.press("Tab");
