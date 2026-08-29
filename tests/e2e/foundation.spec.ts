@@ -1,13 +1,20 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-test("negotiates Dutch without silently rendering French", async ({ page }) => {
-  await page.setExtraHTTPHeaders({ "Accept-Language": "nl-BE,nl;q=0.9,fr;q=0.7" });
-  await page.goto("/");
+test.describe("Dutch negotiation", () => {
+  // `locale` sets the browser's Accept-Language from context creation, unlike an imperative
+  // page.setExtraHTTPHeaders() call, which Chromium does not reliably apply to the very first
+  // navigation request of a fresh context. The quality-value negotiation logic itself (multiple
+  // competing languages, explicit fallback) is unit-tested in packages/localization/tests.
+  test.use({ locale: "nl-BE" });
 
-  await expect(page).toHaveURL(/\/nl$/);
-  await expect(page.locator("html")).toHaveAttribute("lang", "nl");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("heldere basis");
+  test("negotiates Dutch without silently rendering French", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page).toHaveURL(/\/nl$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "nl");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("heldere basis");
+  });
 });
 
 test("preserves an equivalent page when switching language", async ({ page }) => {
