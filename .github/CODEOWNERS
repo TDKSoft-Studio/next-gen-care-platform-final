@@ -1,0 +1,5 @@
+# Every change in this repository requires review from the Human Engineering Authority
+# before it can be merged. Pair this file with branch protection on `main`
+# (require a pull request, require this review, require status checks) so no
+# agent or contributor can push directly to `main` again.
+* @kehe0014
