@@ -2,7 +2,7 @@ import axe from "axe-core";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { ErrorSummary, LanguageSwitcher, SkipLink } from "../src/index";
+import { ErrorSummary, LanguageSwitcher, MainNav, SkipLink } from "../src/index";
 
 describe("UI primitive accessibility baseline", () => {
   it("has no automatically detectable violations in the composed foundation", async () => {
@@ -15,6 +15,13 @@ describe("UI primitive accessibility baseline", () => {
           options={[
             { href: "/fr", label: "Français", locale: "fr" },
             { href: "/nl", label: "Nederlands", locale: "nl" }
+          ]}
+        />
+        <MainNav
+          label="Main"
+          items={[
+            { current: true, href: "/fr", label: "Home" },
+            { href: "/fr/home-care", label: "Home care" }
           ]}
         />
         <main id="main-content">

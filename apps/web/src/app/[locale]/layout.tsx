@@ -1,5 +1,5 @@
 import { isLocale, localePath, locales, translate, type Locale } from "@next-gen-care/localization";
-import { LanguageSwitcher, SkipLink } from "@next-gen-care/ui";
+import { LanguageSwitcher, MainNav, SkipLink } from "@next-gen-care/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -31,6 +31,15 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   return metadataFor(locale);
 }
 
+const domainRoutes = [
+  { path: "/", translationKey: "nav.home" },
+  { path: "/home-care", translationKey: "nav.home_care" },
+  { path: "/operating-room", translationKey: "nav.operating_room" },
+  { path: "/well-being", translationKey: "nav.well_being" },
+  { path: "/travel-team-building", translationKey: "nav.travel_team_building" },
+  { path: "/health-tech", translationKey: "nav.health_tech" }
+] as const;
+
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
@@ -53,6 +62,15 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             />
           </div>
         </header>
+        <div className="site-nav">
+          <MainNav
+            label={translate(locale, "foundation.primary_navigation")}
+            items={domainRoutes.map((route) => ({
+              href: localePath(locale, route.path),
+              label: translate(locale, route.translationKey)
+            }))}
+          />
+        </div>
         {children}
       </body>
     </html>
