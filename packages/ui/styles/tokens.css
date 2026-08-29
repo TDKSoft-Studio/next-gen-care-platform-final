@@ -1,0 +1,35 @@
+:root {
+  color-scheme: light;
+
+  --ngc-color-ink: #142b30;
+  --ngc-color-ink-muted: #456069;
+  --ngc-color-surface: #fffdf8;
+  --ngc-color-surface-raised: #ffffff;
+  --ngc-color-brand: #0b665f;
+  --ngc-color-brand-strong: #074c48;
+  --ngc-color-accent: #df6c43;
+  --ngc-color-soft: #d9eeea;
+  --ngc-color-border: #a8c3c1;
+  --ngc-color-focus: #b94317;
+  --ngc-color-error: #9d271b;
+
+  --ngc-font-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ngc-font-serif: Iowan Old Style, Palatino Linotype, Book Antiqua, Palatino, Georgia, serif;
+
+  --ngc-space-1: 0.25rem;
+  --ngc-space-2: 0.5rem;
+  --ngc-space-3: 0.75rem;
+  --ngc-space-4: 1rem;
+  --ngc-space-5: 1.5rem;
+  --ngc-space-6: 2rem;
+  --ngc-space-7: 3rem;
+  --ngc-space-8: 4.5rem;
+
+  --ngc-radius-small: 0.5rem;
+  --ngc-radius-medium: 1rem;
+  --ngc-radius-pill: 999px;
+  --ngc-shadow-soft: 0 1.25rem 4rem rgb(20 43 48 / 10%);
+  --ngc-content-wide: 74rem;
+  --ngc-content-reading: 42rem;
+}

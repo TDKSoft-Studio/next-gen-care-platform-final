@@ -1,0 +1,20 @@
+packages:
+  - apps/*
+  - packages/*
+
+allowBuilds:
+  "@go-task/cli": true
+  unrs-resolver: true
+
+onlyBuiltDependencies:
+  - "@cyclonedx/cdxgen-plugins-bin"
+  - "@go-task/cli"
+  - "@scarf/scarf"
+  - esbuild
+  - unrs-resolver
+
+peerDependencyRules:
+  allowedVersions:
+    "eslint-plugin-import>eslint": "10"
+    "eslint-plugin-jsx-a11y>eslint": "10"
+    "eslint-plugin-react>eslint": "10"

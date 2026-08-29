@@ -1,0 +1,148 @@
+version: "3"
+
+silent: true
+
+tasks:
+  default:
+    desc: List available engineering tasks
+    cmds:
+      - task --list
+
+  setup:
+    desc: Check required and optional tools without changing the workstation
+    cmds:
+      - node scripts/check-tools.mjs
+
+  format:
+    desc: Format repository files
+    cmds:
+      - pnpm format
+
+  format:check:
+    desc: Check repository formatting
+    cmds:
+      - pnpm format:check
+
+  lint:
+    desc: Run lint and package-boundary checks
+    cmds:
+      - pnpm lint
+
+  typecheck:
+    desc: Type-check every workspace package
+    cmds:
+      - pnpm typecheck
+
+  test:unit:
+    desc: Run deterministic unit tests
+    cmds:
+      - pnpm test:unit
+
+  test:integration:
+    desc: Run foundation integration tests
+    cmds:
+      - pnpm test:integration
+
+  test:contract:
+    desc: Enforce the current appointment-contract phase gate
+    cmds:
+      - pnpm test:contract
+
+  test:e2e:
+    desc: Run browser E2E tests (requires a local Playwright Chromium)
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: .cache/ms-playwright
+    cmds:
+      - pnpm test:e2e
+
+  test:http:
+    desc: Validate localized routes, headers, and probes against the production build
+    cmds:
+      - pnpm test:http
+
+  browser:install:
+    desc: Download Chromium into the ignored repository cache
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: .cache/ms-playwright
+    cmds:
+      - pnpm exec playwright install chromium
+
+  test:a11y:
+    desc: Run automated component accessibility checks
+    cmds:
+      - pnpm test:a11y
+
+  security:sast:
+    desc: Run the local static-analysis baseline
+    cmds:
+      - pnpm security:sast
+
+  security:dependencies:
+    desc: Audit production dependencies against the npm advisory service
+    cmds:
+      - pnpm security:dependencies
+
+  security:secrets:
+    desc: Scan repository files for high-confidence secret patterns
+    cmds:
+      - pnpm security:secrets
+
+  security:sbom:
+    desc: Generate a CycloneDX SBOM under .artifacts
+    cmds:
+      - pnpm security:sbom
+
+  build:
+    desc: Create the production web build
+    cmds:
+      - pnpm build
+
+  performance:
+    desc: Check the built frontend against foundation asset budgets
+    cmds:
+      - pnpm performance
+
+  container:build:
+    desc: Build the provider-neutral application container
+    preconditions:
+      - sh: docker version >/dev/null 2>&1
+        msg: Docker is required. Enable Docker Desktop WSL integration or install Docker Engine.
+    cmds:
+      - docker build --tag next-gen-care-platform:phase-1 .
+
+  container:scan:
+    desc: Scan the locally built application container
+    preconditions:
+      - sh: command -v trivy >/dev/null 2>&1
+        msg: Trivy is required. See https://trivy.dev/latest/getting-started/installation/.
+    cmds:
+      - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed next-gen-care-platform:phase-1
+
+  infra:helm:
+    desc: Report the separate infrastructure repository gate
+    cmds:
+      - node scripts/check-phase-gate.mjs helm
+
+  ci:
+    desc: Run the provider-independent CI gates used by the primary CI job
+    cmds:
+      - task: format:check
+      - task: lint
+      - task: typecheck
+      - task: test:unit
+      - task: test:integration
+      - task: test:contract
+      - task: test:a11y
+      - task: security:secrets
+      - task: security:sast
+      - task: build
+      - task: test:http
+      - task: performance
+
+  ci:extended:
+    desc: Run network/browser/supply-chain gates in addition to the primary CI gates
+    cmds:
+      - task: ci
+      - task: security:dependencies
+      - task: security:sbom
+      - task: test:e2e

@@ -1,0 +1,121 @@
+name: Application foundation CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  CI: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+  PLAYWRIGHT_BROWSERS_PATH: .cache/ms-playwright
+
+jobs:
+  quality:
+    name: Provider-independent gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+      - name: Enable pinned package manager
+        run: |
+          npm install --global corepack@0.36.0
+          corepack enable
+          corepack install
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Inspect tool setup
+        run: pnpm exec task setup
+      - name: Run primary local-parity gate
+        run: pnpm exec task ci
+
+  browser:
+    name: Chromium journeys
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+      - name: Enable pinned package manager
+        run: |
+          npm install --global corepack@0.36.0
+          corepack enable
+          corepack install
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium on the ephemeral runner
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run browser gate
+        run: pnpm exec task test:e2e
+
+  supply-chain:
+    name: Dependency audit and SBOM
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+      - name: Enable pinned package manager
+        run: |
+          npm install --global corepack@0.36.0
+          corepack enable
+          corepack install
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Audit production dependencies
+        run: pnpm exec task security:dependencies
+      - name: Generate CycloneDX SBOM
+        run: pnpm exec task security:sbom
+      - name: Upload SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sbom-cyclonedx
+          path: .artifacts/sbom.cdx.json
+          if-no-files-found: error
+
+  container:
+    name: Container build and scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Build provider-neutral image
+        run: docker build --tag next-gen-care-platform:ci .
+      - name: Scan fixed high and critical vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: next-gen-care-platform:ci
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+  dependency-review:
+    name: Pull-request dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high

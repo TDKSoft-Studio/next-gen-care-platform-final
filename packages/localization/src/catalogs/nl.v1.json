@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "locale": "nl",
+    "version": 1
+  },
+  "foundation.brand": "NEXT GEN CARE",
+  "foundation.skip_to_content": "Naar de hoofdinhoud",
+  "foundation.primary_navigation": "Hoofdnavigatie",
+  "foundation.language_selector": "Kies de taal",
+  "foundation.locale.fr": "Français",
+  "foundation.locale.nl": "Nederlands",
+  "foundation.eyebrow": "Technische basis",
+  "foundation.heading": "Een heldere basis voor betrouwbare digitale zorgtrajecten.",
+  "foundation.introduction": "Deze eerste basis combineert een toegankelijke interface, een tweetalige architectuur en technische waarborgen. Inhoud en diensten worden pas toegevoegd na goedkeuring.",
+  "foundation.status_heading": "Basis ingericht",
+  "foundation.status_accessibility": "Toegankelijke bouwstenen en toetsenbordnavigatie",
+  "foundation.status_localization": "Franse en Nederlandse catalogi zonder stille terugval",
+  "foundation.status_quality": "Reproduceerbare controles van lokaal werkstation tot CI",
+  "foundation.notice": "Basispagina — in deze fase worden geen zorgdienst en geen patiëntenformulier gepubliceerd."
+}

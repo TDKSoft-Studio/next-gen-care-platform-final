@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "locale": "fr",
+    "version": 1
+  },
+  "foundation.brand": "NEXT GEN CARE",
+  "foundation.skip_to_content": "Aller au contenu principal",
+  "foundation.primary_navigation": "Navigation principale",
+  "foundation.language_selector": "Choisir la langue",
+  "foundation.locale.fr": "Français",
+  "foundation.locale.nl": "Nederlands",
+  "foundation.eyebrow": "Fondation technique",
+  "foundation.heading": "Une base claire pour des parcours de soin numériques fiables.",
+  "foundation.introduction": "Cette première fondation réunit une interface accessible, une architecture bilingue et des garde-fous d’ingénierie. Les contenus et services métier seront ajoutés uniquement après leur validation.",
+  "foundation.status_heading": "Socle établi",
+  "foundation.status_accessibility": "Primitives accessibles et navigation au clavier",
+  "foundation.status_localization": "Catalogues français et néerlandais sans repli silencieux",
+  "foundation.status_quality": "Contrôles reproductibles du poste local à la CI",
+  "foundation.notice": "Page de fondation — aucun service de soin ni formulaire patient n’est publié à ce stade."
+}

@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "description": "Phase 1 compressed application asset budgets; revisit with measured user journeys in Phase 2.",
+  "javascriptGzipBytes": 204800,
+  "cssGzipBytes": 51200
+}
