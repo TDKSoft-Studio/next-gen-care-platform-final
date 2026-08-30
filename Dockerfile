@@ -30,6 +30,9 @@ RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack 
     /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack /usr/local/bin/pnpm* /usr/local/bin/yarn*
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/web/.next/static ./apps/web/.next/static
+# esbuild is only used while compiling Next.js.  Keeping its platform binary in the
+# standalone server image adds an unused Go executable to the production attack surface.
+RUN rm -rf /app/node_modules/.pnpm/@esbuild+linux-x64@0.25.12/node_modules/@esbuild/linux-x64
 USER nextjs
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

@@ -6,10 +6,9 @@ interface DomainPageProps {
 }
 
 /**
- * Shared shell for a business-domain placeholder route. Renders only the
- * neutral, non-committal structure approved for this phase (see
- * docs/architecture/BOUNDED-CONTEXTS.md) — no services, prices, or clinical
- * claims. Real content lands only after CMS/content ADR decisions.
+ * Shared shell for a domain presentation. It intentionally contains no
+ * forms, prices, contact details, care availability, or clinical claims;
+ * those facts remain CMS-governed and require their own human review.
  */
 export function DomainPage({ eyebrow, heading, introduction, notice }: DomainPageProps) {
   return (
@@ -17,9 +16,9 @@ export function DomainPage({ eyebrow, heading, introduction, notice }: DomainPag
       <p className="eyebrow">{eyebrow}</p>
       <h1>{heading}</h1>
       <p className="lede">{introduction}</p>
-      <p className="foundation-notice" role="note">
+      <aside className="foundation-notice" role="note">
         {notice}
-      </p>
+      </aside>
     </main>
   );
 }

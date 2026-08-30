@@ -13,7 +13,9 @@ test.describe("Dutch negotiation", () => {
 
     await expect(page).toHaveURL(/\/nl$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "nl");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("heldere basis");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Trajecten, teams en projecten"
+    );
   });
 });
 
@@ -34,7 +36,7 @@ test("navigates from the primary nav to a business-domain placeholder page", asy
 
   await expect(page).toHaveURL(/\/fr\/home-care$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Soins à domicile");
-  await expect(page.getByRole("note")).toContainText("aucun contenu métier");
+  await expect(page.getByText("Les modalités, disponibilités")).toBeVisible();
 });
 
 test("has no automatically detectable violations on a business-domain placeholder page", async ({

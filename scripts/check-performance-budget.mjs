@@ -1,17 +1,58 @@
 import { gzipSync } from "node:zlib";
-import { globSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import process from "node:process";
 
 const budgets = JSON.parse(readFileSync("PERFORMANCE_BUDGETS.json", "utf8"));
+const buildDirectory = "apps/web/.next";
+const publicManifests = [
+  `${buildDirectory}/server/app/[locale]/page_client-reference-manifest.js`,
+  `${buildDirectory}/server/app/[locale]/health-tech/page_client-reference-manifest.js`,
+  `${buildDirectory}/server/app/[locale]/home-care/page_client-reference-manifest.js`,
+  `${buildDirectory}/server/app/[locale]/operating-room/page_client-reference-manifest.js`,
+  `${buildDirectory}/server/app/[locale]/travel-team-building/page_client-reference-manifest.js`,
+  `${buildDirectory}/server/app/[locale]/well-being/page_client-reference-manifest.js`
+];
+
+function parseManifest(path) {
+  const source = readFileSync(path, "utf8");
+  const start = source.lastIndexOf(" = ");
+  if (start === -1) throw new Error(`Unable to parse client reference manifest: ${path}`);
+  return JSON.parse(source.slice(start + 3).replace(/;\s*$/, ""));
+}
+
+function buildPath(assetPath) {
+  return `${buildDirectory}/${assetPath.replace(/^\/_next\//, "")}`;
+}
+
+function collectPublicAssets() {
+  const files = new Set();
+  const buildManifest = JSON.parse(readFileSync(`${buildDirectory}/build-manifest.json`, "utf8"));
+  for (const assetPath of buildManifest.rootMainFiles) files.add(buildPath(assetPath));
+
+  for (const manifestPath of publicManifests) {
+    if (!existsSync(manifestPath)) continue;
+    const manifest = parseManifest(manifestPath);
+    for (const clientModule of Object.values(manifest.clientModules)) {
+      for (const chunk of clientModule.chunks) files.add(buildPath(chunk));
+    }
+    for (const assets of Object.values(manifest.entryCSSFiles)) {
+      for (const asset of assets) files.add(buildPath(asset.path));
+    }
+  }
+
+  return [...files];
+}
+
+const publicAssets = collectPublicAssets();
 const groups = [
   {
-    name: "JavaScript",
-    files: globSync("apps/web/.next/static/chunks/**/*.js"),
+    name: "Public JavaScript",
+    files: publicAssets.filter((file) => file.endsWith(".js")),
     budget: budgets.javascriptGzipBytes
   },
   {
-    name: "CSS",
-    files: globSync("apps/web/.next/static/chunks/**/*.css"),
+    name: "Public CSS",
+    files: publicAssets.filter((file) => file.endsWith(".css")),
     budget: budgets.cssGzipBytes
   }
 ];
