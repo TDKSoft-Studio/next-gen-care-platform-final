@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  formatCurrency,
   formatNumber,
   getCatalog,
   localePath,
@@ -42,5 +43,7 @@ describe("localization policy", () => {
 
   it("uses Belgian locale conventions for number formatting", () => {
     expect(formatNumber("fr", 1234.5)).not.toBe(formatNumber("nl", 1234.5));
+    expect(formatCurrency("fr", 125)).toContain("125");
+    expect(formatCurrency("nl", 125)).toContain("125");
   });
 });

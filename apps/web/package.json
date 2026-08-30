@@ -2,8 +2,14 @@
   "name": "@next-gen-care/web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
+    "cms:generate:importmap": "payload generate:importmap",
+    "cms:generate:types": "payload generate:types",
+    "cms:migrate": "payload migrate",
+    "cms:migrate:create": "payload migrate:create",
+    "cms:migrate:status": "payload migrate:status",
     "dev": "next dev",
     "start": "next start",
     "typecheck": "tsc --noEmit -p tsconfig.json"
@@ -12,9 +18,16 @@
     "@next-gen-care/localization": "workspace:*",
     "@next-gen-care/observability": "workspace:*",
     "@next-gen-care/ui": "workspace:*",
+    "@payloadcms/db-postgres": "3.88.0",
+    "@payloadcms/next": "3.88.0",
+    "@payloadcms/richtext-lexical": "3.88.0",
+    "@payloadcms/translations": "3.88.0",
+    "graphql": "16.11.0",
     "next": "16.3.3",
+    "payload": "3.88.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@types/node": "26.4.0",

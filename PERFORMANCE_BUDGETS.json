@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Phase 1 compressed application asset budgets; revisit with measured user journeys in Phase 2.",
+  "description": "Phase 2 compressed public-route asset budgets; Payload administration assets are measured separately from the public portal.",
   "javascriptGzipBytes": 204800,
   "cssGzipBytes": 51200
 }

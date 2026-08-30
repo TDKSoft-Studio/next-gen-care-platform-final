@@ -1,8 +1,12 @@
-import { isLocale, localePath, locales, translate, type Locale } from "@next-gen-care/localization";
-import { LanguageSwitcher, SkipLink } from "@next-gen-care/ui";
+import { isLocale, locales, translate } from "@next-gen-care/localization";
+import { SkipLink } from "@next-gen-care/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+
+import { SiteFooter } from "../../components/site-footer";
+import { SiteHeader } from "../../components/site-header";
+import { siteIndexingEnabled, siteOrigin } from "../../content/site-config";
 
 import "@next-gen-care/ui/tokens.css";
 import "@next-gen-care/ui/foundation.css";
@@ -13,14 +17,6 @@ interface LocaleLayoutProps {
   params: Promise<{ locale: string }>;
 }
 
-function metadataFor(locale: Locale): Metadata {
-  return {
-    title: translate(locale, "foundation.brand"),
-    description: translate(locale, "foundation.introduction"),
-    robots: { follow: false, index: false }
-  };
-}
-
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
@@ -28,7 +24,16 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  return metadataFor(locale);
+  const index = siteIndexingEnabled();
+  return {
+    description: translate(locale, "portal.hero.summary"),
+    metadataBase: new URL(siteOrigin()),
+    robots: { follow: index, index },
+    title: {
+      default: translate(locale, "foundation.brand"),
+      template: `%s — ${translate(locale, "foundation.brand")}`
+    }
+  };
 }
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
@@ -39,21 +44,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <html lang={locale}>
       <body>
         <SkipLink>{translate(locale, "foundation.skip_to_content")}</SkipLink>
-        <header className="site-header">
-          <div className="site-header__inner">
-            <span className="wordmark">{translate(locale, "foundation.brand")}</span>
-            <LanguageSwitcher
-              currentLocale={locale}
-              label={translate(locale, "foundation.language_selector")}
-              options={locales.map((targetLocale) => ({
-                href: localePath(targetLocale),
-                label: translate(locale, `foundation.locale.${targetLocale}`),
-                locale: targetLocale
-              }))}
-            />
-          </div>
-        </header>
+        <SiteHeader locale={locale} />
         {children}
+        <aside className="emergency-notice" role="note">
+          {translate(locale, "portal.emergency")}
+        </aside>
+        <SiteFooter locale={locale} />
       </body>
     </html>
   );

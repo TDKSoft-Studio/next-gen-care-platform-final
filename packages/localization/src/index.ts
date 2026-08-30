@@ -69,6 +69,13 @@ export function formatNumber(locale: Locale, value: number): string {
   return new Intl.NumberFormat(intlLocales[locale]).format(value);
 }
 
+export function formatCurrency(locale: Locale, value: number, currency = "EUR"): string {
+  return new Intl.NumberFormat(intlLocales[locale], {
+    currency,
+    style: "currency"
+  }).format(value);
+}
+
 export function formatDate(locale: Locale, value: Date): string {
   return new Intl.DateTimeFormat(intlLocales[locale], { dateStyle: "long" }).format(value);
 }

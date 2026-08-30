@@ -59,8 +59,8 @@ try {
   requireCondition(french.status === 200, `Expected /fr 200, got ${french.status}`);
   requireCondition(frenchBody.includes('<html lang="fr">'), "French document language is missing");
   requireCondition(
-    french.headers.get("content-security-policy")?.includes("frame-ancestors 'none'"),
-    "CSP frame protection is missing"
+    french.headers.get("content-security-policy")?.includes("frame-ancestors 'self'"),
+    "Same-origin-only live-preview framing policy is missing"
   );
   requireCondition(
     french.headers.get("referrer-policy") === "no-referrer",
@@ -70,6 +70,27 @@ try {
     french.headers.get("strict-transport-security")?.includes("max-age=63072000"),
     "Production HSTS is missing"
   );
+  requireCondition(
+    frenchBody.includes("Découvrez les domaines de NEXT GEN CARE"),
+    "French landing-page content is missing"
+  );
+
+  const dutchHomeCare = await fetch(`${origin}/nl/thuiszorg`);
+  const dutchHomeCareBody = await dutchHomeCare.text();
+  requireCondition(
+    dutchHomeCare.status === 200,
+    `Expected Dutch home-care 200, got ${dutchHomeCare.status}`
+  );
+  requireCondition(
+    dutchHomeCareBody.includes("Thuiszorg"),
+    "Dutch home-care presentation is missing"
+  );
+
+  const robots = await fetch(`${origin}/robots.txt`);
+  requireCondition(
+    (await robots.text()).includes("Disallow: /"),
+    "Pre-release indexing gate is open"
+  );
 
   const live = await fetch(`${origin}/health/live`);
   const ready = await fetch(`${origin}/health/ready`);
@@ -78,7 +99,7 @@ try {
   requireCondition(live.headers.get("cache-control") === "no-store", "Liveness must not cache");
 
   console.log(
-    "Production HTTP baseline passed: locale redirect, FR document, security headers, liveness, readiness."
+    "Production HTTP baseline passed: locale redirect, FR/NL portal routes, indexing gate, security headers, liveness, readiness."
   );
 } finally {
   server.kill("SIGTERM");

@@ -3,14 +3,14 @@ export interface SecurityHeader {
   value: string;
 }
 
-export function contentSecurityPolicy(production: boolean): string {
+export function contentSecurityPolicy(production: boolean, allowSameOriginFraming = false): string {
   const directives = [
     "default-src 'self'",
     "base-uri 'self'",
     "connect-src 'self'",
     "font-src 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    `frame-ancestors ${allowSameOriginFraming ? "'self'" : "'none'"}`,
     "img-src 'self' data: blob:",
     "object-src 'none'",
     "script-src 'self' 'unsafe-inline'",
@@ -21,14 +21,23 @@ export function contentSecurityPolicy(production: boolean): string {
   return directives.join("; ");
 }
 
-export function securityHeaders(production: boolean): SecurityHeader[] {
+export function securityHeaders(
+  production: boolean,
+  allowSameOriginFraming = false
+): SecurityHeader[] {
   const headers: SecurityHeader[] = [
-    { key: "Content-Security-Policy", value: contentSecurityPolicy(production) },
+    {
+      key: "Content-Security-Policy",
+      value: contentSecurityPolicy(production, allowSameOriginFraming)
+    },
     { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
     { key: "Permissions-Policy", value: "camera=(), geolocation=(), microphone=()" },
     { key: "Referrer-Policy", value: "no-referrer" },
     { key: "X-Content-Type-Options", value: "nosniff" },
-    { key: "X-Frame-Options", value: "DENY" }
+    {
+      key: "X-Frame-Options",
+      value: allowSameOriginFraming ? "SAMEORIGIN" : "DENY"
+    }
   ];
 
   if (production) {

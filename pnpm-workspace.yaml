@@ -4,6 +4,7 @@ packages:
 
 allowBuilds:
   "@go-task/cli": true
+  esbuild: true
   unrs-resolver: true
 
 onlyBuiltDependencies:

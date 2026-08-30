@@ -7,15 +7,23 @@ test("negotiates Dutch without silently rendering French", async ({ page }) => {
 
   await expect(page).toHaveURL(/\/nl$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "nl");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("heldere basis");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Ontdek de domeinen");
 });
 
 test("preserves an equivalent page when switching language", async ({ page }) => {
-  await page.goto("/fr");
+  await page.goto("/fr/soins-a-domicile");
   await page.getByRole("link", { name: "Nederlands" }).click();
 
-  await expect(page).toHaveURL(/\/nl$/);
+  await expect(page).toHaveURL(/\/nl\/thuiszorg$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "nl");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Thuiszorg");
+});
+
+test("exposes the five public domain presentations without a form", async ({ page }) => {
+  await page.goto("/fr");
+  const domains = page.locator("#domains");
+  await expect(domains.getByRole("link")).toHaveCount(5);
+  await expect(page.locator("form")).toHaveCount(0);
 });
 
 test("supports a keyboard skip link", async ({ page }) => {

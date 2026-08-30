@@ -5,6 +5,8 @@ coverage
 node_modules
 playwright-report
 test-results
+apps/web/src/app/(payload)/admin/importMap.js
+apps/web/src/cms/payload-types.ts
 pnpm-lock.yaml
 docs/discovery/appointment-api-openapi-observed.json
 AGENTS.md

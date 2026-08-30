@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 
 export function proxy(request: NextRequest) {
   const firstSegment = request.nextUrl.pathname.split("/")[1] ?? "";
+  if (["admin", "cms-api", "cms-graphql", "media"].includes(firstSegment)) {
+    return NextResponse.next();
+  }
   if (isLocale(firstSegment)) return NextResponse.next();
 
   const locale = preferredLocale(request.headers.get("accept-language"));
@@ -13,5 +16,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|health|_next/static|_next/image|favicon.ico|robots.txt).*)"]
+  matcher: [
+    "/((?!admin|cms-api|cms-graphql|media|api|health|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)"
+  ]
 };

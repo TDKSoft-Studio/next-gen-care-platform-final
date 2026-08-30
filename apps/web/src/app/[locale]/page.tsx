@@ -1,41 +1,41 @@
 import { isLocale, translate } from "@next-gen-care/localization";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import { getPublicPortalContent } from "../../cms/public-content";
+import { HomePresentation } from "../../components/home-presentation";
+import { publicMetadata } from "../../content/metadata";
 
 interface FoundationPageProps {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ preview?: string | string[] }>;
 }
 
-export default async function FoundationPage({ params }: FoundationPageProps) {
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+  searchParams
+}: FoundationPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const preview = (await searchParams).preview === "1";
+  const content = await getPublicPortalContent(locale, "corporate", false);
+  const title =
+    content.page?.seo?.title ?? content.page?.title ?? translate(locale, "portal.hero.title");
+  const description =
+    content.page?.seo?.description ??
+    content.page?.summary ??
+    translate(locale, "portal.hero.summary");
+  return publicMetadata({ description, locale, pathname: `/${locale}`, preview, title });
+}
+
+export default async function HomePage({ params, searchParams }: FoundationPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  const preview = (await searchParams).preview === "1";
+  const content = await getPublicPortalContent(locale, "corporate", preview);
+  if (content.previewDenied) notFound();
 
-  const statusItems = [
-    "foundation.status_accessibility",
-    "foundation.status_localization",
-    "foundation.status_quality"
-  ] as const;
-
-  return (
-    <main id="main-content" tabIndex={-1}>
-      <section aria-labelledby="foundation-heading" className="foundation-hero">
-        <div className="foundation-hero__glow" aria-hidden="true" />
-        <div className="foundation-hero__content">
-          <p className="eyebrow">{translate(locale, "foundation.eyebrow")}</p>
-          <h1 id="foundation-heading">{translate(locale, "foundation.heading")}</h1>
-          <p className="lede">{translate(locale, "foundation.introduction")}</p>
-        </div>
-        <aside aria-labelledby="status-heading" className="foundation-status">
-          <h2 id="status-heading">{translate(locale, "foundation.status_heading")}</h2>
-          <ul>
-            {statusItems.map((key) => (
-              <li key={key}>{translate(locale, key)}</li>
-            ))}
-          </ul>
-        </aside>
-      </section>
-      <p className="foundation-notice" role="note">
-        {translate(locale, "foundation.notice")}
-      </p>
-    </main>
-  );
+  return <HomePresentation locale={locale} page={content.page} previewMode={content.previewMode} />;
 }

@@ -553,6 +553,29 @@ Required controls include:
 
 No real patient data may be used in development, tests, screenshots, demos, logs, or AI prompts.
 
+### 13.1 Temporary CMS administrator MFA exception
+
+The Human Engineering Authority approved on 29 August 2026 a narrow, version-bound exception
+for the Payload CMS administrator accounts:
+
+- application versions `0.1.0` and `0.1.1` may use named password-authenticated CMS accounts
+  without MFA;
+- the exception applies only to the CMS administration surface at `/admin` and does not apply to
+  any patient, appointment, infrastructure, cloud, database, or source-control account;
+- shared accounts are prohibited and no more than the two initially approved named CMS users may
+  exist under this exception;
+- compensating controls are mandatory: TLS, secure and same-site cookies, a minimum 20-character
+  generated password, login-attempt lockout, short authenticated sessions, non-indexing of the
+  administration surface, security event logging, dependency patching, and immediate account
+  revocation capability;
+- the residual account-takeover risk is explicitly accepted by the Human Engineering Authority for
+  the exception window;
+- MFA becomes mandatory in version `0.1.2`. That version may not be released while CMS MFA evidence
+  is absent, and extending the exception requires a new explicit contract revision and human risk
+  acceptance.
+
+This exception does not weaken the general MFA requirement for privileged systems outside the CMS.
+
 ---
 
 ## 14. Accessibility and user safety

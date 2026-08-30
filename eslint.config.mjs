@@ -22,6 +22,8 @@ export default defineConfig([
     ".artifacts/**",
     ".cache/**",
     "**/.next/**",
+    "apps/web/src/app/(payload)/admin/importMap.js",
+    "apps/web/src/cms/payload-types.ts",
     "coverage/**",
     "node_modules/**",
     "playwright-report/**",

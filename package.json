@@ -13,6 +13,9 @@
   "scripts": {
     "build": "pnpm --filter @next-gen-care/web build",
     "ci": "task ci",
+    "cms:generate": "pnpm --filter @next-gen-care/web cms:generate:types && pnpm --filter @next-gen-care/web cms:generate:importmap",
+    "cms:migrate": "pnpm --filter @next-gen-care/web cms:migrate",
+    "cms:migrate:status": "pnpm --filter @next-gen-care/web cms:migrate:status",
     "dev": "pnpm --filter @next-gen-care/web dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

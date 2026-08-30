@@ -16,3 +16,6 @@ test-results/
 .DS_Store
 Thumbs.db
 *.log
+
+# Payload local media; production uses an approved persistent volume.
+apps/web/media/

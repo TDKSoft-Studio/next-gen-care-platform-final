@@ -21,4 +21,12 @@ describe("security header baseline", () => {
     expect(securityHeaders(true).some(({ key }) => key === "Strict-Transport-Security")).toBe(true);
     expect(contentSecurityPolicy(true)).toContain("upgrade-insecure-requests");
   });
+
+  it("allows only same-origin framing for CMS live preview of public pages", () => {
+    const headers = Object.fromEntries(
+      securityHeaders(true, true).map(({ key, value }) => [key, value])
+    );
+    expect(headers["Content-Security-Policy"]).toContain("frame-ancestors 'self'");
+    expect(headers["X-Frame-Options"]).toBe("SAMEORIGIN");
+  });
 });
