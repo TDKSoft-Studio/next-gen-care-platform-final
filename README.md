@@ -1,6 +1,6 @@
 # NEXT GEN CARE platform
 
-This repository contains the provider-neutral application foundation approved for Phase 1. It currently ships a neutral FR/NL foundation page, accessible UI primitives, safe telemetry contracts, security defaults, and reproducible engineering gates. It does **not** yet publish business services, patient forms, CMS content, appointment integration, infrastructure, or a production deployment.
+This repository contains the provider-neutral NEXT GEN CARE public-platform application. It currently ships a Next.js web app with FR/NL routes, five public domain presentations, a local Payload CMS spike, a server-side home-care appointment adapter, security defaults, and reproducible engineering gates. It does **not** include production infrastructure, approved provider configuration, production content approval, legal/privacy/accessibility acceptance, or a production deployment.
 
 ## Toolchain
 
@@ -39,10 +39,10 @@ Container gates require Docker and Trivy. Infrastructure Helm gates belong to th
 
 ## Boundaries
 
-- `apps/web`: public Next.js deployable and its server-side facade.
+- `apps/web`: public Next.js deployable, Payload CMS spike, and server-side appointment facade.
 - `packages/ui`: localization-neutral accessible primitives and tokens.
 - `packages/localization`: versioned catalogs, locale routes, fallback and formatting policy.
 - `packages/observability`: fixed, privacy-preserving telemetry schema.
 - `packages/config`: shared compiler configuration.
 
-Do not add provider SDKs, appointment clients, patient data, or generic telemetry payloads without an accepted phase/ADR decision.
+Do not add provider SDKs, real patient data, generic telemetry payloads, production infrastructure, or deployment configuration without an accepted phase/ADR decision. The current appointment UI is limited to the approved `PAY_ON_SITE` human-review request flow and must not present a request as a confirmed appointment.
