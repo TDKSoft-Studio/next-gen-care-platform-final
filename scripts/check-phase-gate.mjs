@@ -12,7 +12,7 @@ if (gate === "contract") {
     process.exitCode = 1;
   } else {
     console.log(
-      "NOT_APPLICABLE_PHASE_1: no appointment client was generated; contract integration remains blocked pending a human-accepted tracked OpenAPI contract."
+      "MANUAL_APPOINTMENT_ADAPTER_ONLY: no generated appointment client is tracked in this repository. This is a phase-gate status, not schema-compatibility evidence against a pinned OpenAPI artifact."
     );
   }
 } else if (gate === "helm") {
