@@ -1,8 +1,11 @@
 import { isLocale, localePath, locales, translate, type Locale } from "@next-gen-care/localization";
-import { LanguageSwitcher, MainNav, SkipLink } from "@next-gen-care/ui";
+import { MainNav, SkipLink } from "@next-gen-care/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+
+import { LocaleSwitcher } from "../../components/locale-switcher";
+import { isPublicIndexingEnabled, publicSiteUrl } from "../../config/public-site";
 
 import "@next-gen-care/ui/tokens.css";
 import "@next-gen-care/ui/foundation.css";
@@ -14,10 +17,32 @@ interface LocaleLayoutProps {
 }
 
 function metadataFor(locale: Locale): Metadata {
+  const siteUrl = publicSiteUrl();
+  const indexingEnabled = isPublicIndexingEnabled();
+  const canonical = siteUrl ? new URL(localePath(locale), siteUrl).toString() : undefined;
+
   return {
     title: translate(locale, "foundation.brand"),
     description: translate(locale, "foundation.introduction"),
-    robots: { follow: false, index: false }
+    alternates: siteUrl
+      ? {
+          canonical,
+          languages: {
+            "fr-BE": new URL(localePath("fr"), siteUrl).toString(),
+            "nl-BE": new URL(localePath("nl"), siteUrl).toString(),
+            "x-default": new URL(localePath("fr"), siteUrl).toString()
+          }
+        }
+      : undefined,
+    openGraph: {
+      description: translate(locale, "foundation.introduction"),
+      locale: locale === "fr" ? "fr_BE" : "nl_BE",
+      siteName: translate(locale, "foundation.brand"),
+      title: translate(locale, "foundation.brand"),
+      type: "website",
+      url: canonical
+    },
+    robots: { follow: indexingEnabled, index: indexingEnabled }
   };
 }
 
@@ -51,15 +76,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <header className="site-header">
           <div className="site-header__inner">
             <span className="wordmark">{translate(locale, "foundation.brand")}</span>
-            <LanguageSwitcher
-              currentLocale={locale}
-              label={translate(locale, "foundation.language_selector")}
-              options={locales.map((targetLocale) => ({
-                href: localePath(targetLocale),
-                label: translate(locale, `foundation.locale.${targetLocale}`),
-                locale: targetLocale
-              }))}
-            />
+            <LocaleSwitcher currentLocale={locale} />
           </div>
         </header>
         <div className="site-nav">
@@ -72,6 +89,9 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           />
         </div>
         {children}
+        <footer className="site-footer">
+          <a href={localePath(locale, "/legal")}>{translate(locale, "foundation.legal_link")}</a>
+        </footer>
       </body>
     </html>
   );

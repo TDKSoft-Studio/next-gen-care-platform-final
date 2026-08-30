@@ -139,6 +139,182 @@ h1 {
   padding-left: var(--ngc-space-4);
 }
 
+.domain-overview {
+  margin-top: var(--ngc-space-8);
+}
+
+.domain-overview__heading h2 {
+  font-family: var(--ngc-font-serif);
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-weight: 520;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  margin: 0;
+  max-width: 18ch;
+}
+
+.domain-grid {
+  display: grid;
+  gap: var(--ngc-space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  margin: var(--ngc-space-6) 0 0;
+  padding: 0;
+}
+
+.domain-card {
+  background: rgb(255 255 255 / 72%);
+  border: 1px solid var(--ngc-color-border);
+  border-radius: var(--ngc-radius-medium);
+  color: inherit;
+  display: grid;
+  gap: var(--ngc-space-3);
+  min-height: 13rem;
+  padding: var(--ngc-space-5);
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.domain-card:focus-visible,
+.domain-card:hover {
+  border-color: var(--ngc-color-brand);
+  box-shadow: var(--ngc-shadow-soft);
+  transform: translateY(-0.15rem);
+}
+
+.domain-card h3 {
+  font-family: var(--ngc-font-serif);
+  font-size: 1.5rem;
+  font-weight: 560;
+  margin: 0;
+}
+
+.domain-card p {
+  color: var(--ngc-color-ink-muted);
+  margin: 0;
+}
+
+.domain-card span {
+  align-self: end;
+  color: var(--ngc-color-brand-strong);
+  font-size: 1.4rem;
+}
+
+.editorial-page {
+  max-width: var(--ngc-content-reading);
+}
+
+.cms-rich-text {
+  color: var(--ngc-color-ink-muted);
+  margin-top: var(--ngc-space-6);
+  max-width: var(--ngc-content-reading);
+}
+
+.cms-rich-text > * + * {
+  margin-top: var(--ngc-space-4);
+}
+
+.cms-rich-text h2,
+.cms-rich-text h3 {
+  color: var(--ngc-color-ink);
+  font-family: var(--ngc-font-serif);
+}
+
+.site-footer {
+  border-top: 1px solid var(--ngc-color-border);
+  margin: 0 auto;
+  max-width: var(--ngc-content-wide);
+  padding: var(--ngc-space-5);
+}
+
+.site-footer a {
+  color: var(--ngc-color-ink-muted);
+}
+
+.slot-selector {
+  background: rgb(255 255 255 / 78%);
+  border: 1px solid var(--ngc-color-border);
+  border-radius: var(--ngc-radius-medium);
+  margin: 0 auto var(--ngc-space-8);
+  max-width: var(--ngc-content-wide);
+  padding: var(--ngc-space-6) var(--ngc-space-5);
+}
+
+.slot-selector h2 {
+  font-family: var(--ngc-font-serif);
+  font-size: 2rem;
+  margin: 0 0 var(--ngc-space-5);
+}
+
+.slot-selector__fields {
+  display: grid;
+  gap: var(--ngc-space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: var(--ngc-space-5);
+}
+
+.slot-selector label {
+  display: grid;
+  gap: var(--ngc-space-2);
+  font-weight: 650;
+}
+
+.slot-selector input,
+.slot-selector select {
+  background: var(--ngc-color-surface);
+  border: 1px solid var(--ngc-color-border-strong);
+  border-radius: var(--ngc-radius-small);
+  font: inherit;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.7rem;
+}
+
+.slot-selector button {
+  background: var(--ngc-color-brand);
+  border: 0;
+  border-radius: var(--ngc-radius-small);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  margin: var(--ngc-space-2) var(--ngc-space-3) var(--ngc-space-4) 0;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+}
+
+.slot-selector button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.slot-selector fieldset {
+  border: 1px solid var(--ngc-color-border);
+  display: grid;
+  gap: var(--ngc-space-3);
+  margin: var(--ngc-space-4) 0;
+  padding: var(--ngc-space-4);
+}
+
+.slot-option {
+  align-items: center;
+  display: flex !important;
+  font-weight: 500 !important;
+  gap: var(--ngc-space-3) !important;
+}
+
+.slot-selector__success {
+  border-left: 0.22rem solid var(--ngc-color-accent);
+  margin-top: var(--ngc-space-3);
+  padding-left: var(--ngc-space-4);
+}
+
+.slot-selector__success p {
+  margin: var(--ngc-space-2) 0;
+}
+
 @media (max-width: 52rem) {
   .foundation-hero {
     grid-template-columns: 1fr;
@@ -148,12 +324,21 @@ h1 {
   .foundation-status {
     max-width: 34rem;
   }
+
+  .domain-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .slot-selector__fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 32rem) {
   .site-header,
   .site-nav,
-  main {
+  main,
+  .site-footer {
     padding-left: var(--ngc-space-4);
     padding-right: var(--ngc-space-4);
   }
@@ -161,5 +346,9 @@ h1 {
   .site-header__inner {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .slot-selector__fields {
+    grid-template-columns: 1fr;
   }
 }

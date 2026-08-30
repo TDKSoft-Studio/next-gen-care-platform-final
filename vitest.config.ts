@@ -3,7 +3,12 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "jsdom",
-    exclude: ["**/*.a11y.test.tsx", "**/*.integration.test.ts", "**/*.integration.test.tsx"],
+    exclude: [
+      "**/.next/**",
+      "**/*.a11y.test.tsx",
+      "**/*.integration.test.ts",
+      "**/*.integration.test.tsx"
+    ],
     include: [
       "apps/**/*.test.ts",
       "apps/**/*.test.tsx",
