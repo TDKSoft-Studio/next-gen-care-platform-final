@@ -3,7 +3,7 @@
 ## Files
 
 - `AGENTS.md` — thin Codex adapter. The Master Engineering Contract remains authoritative.
-- `CODEX_PHASE_0_PROMPT.md` — trigger prompt to paste into Codex.
+- `docs/prompts/codex/PHASE_0_PROMPT.md` — trigger prompt to paste into Codex.
 - `docs/architecture/PHASE-0-ARCHITECTURE-SCHEMAS.md` — architecture diagram schemas and acceptance checklist.
 - `docs/architecture/adr/ADR-TEMPLATE.md` — ADR template.
 - `docs/reports/PHASE-0-REPORT-TEMPLATE.md` — French report template.
@@ -14,8 +14,8 @@
 ```text
 NEXT_GEN_CARE_MASTER_ENGINEERING_PROMPT.md
 AGENTS.md
-CODEX_PHASE_0_PROMPT.md
-README-CODEX-PHASE0.md
+docs/prompts/codex/PHASE_0_PROMPT.md
+docs/prompts/codex/README-PHASE0-STARTER-PACK.md
 
 docs/
   architecture/
@@ -43,7 +43,7 @@ The individual Phase 0 architecture files are intentionally created by Codex fro
 
 1. Put the Master Engineering Contract at the repository root.
 2. Put `AGENTS.md` at the repository root.
-3. Paste `CODEX_PHASE_0_PROMPT.md` into Codex.
+3. Paste `docs/prompts/codex/PHASE_0_PROMPT.md` into Codex.
 4. Let Codex perform Phase 0 only.
 5. Review the generated artifacts and French report.
 6. Make the human decision.

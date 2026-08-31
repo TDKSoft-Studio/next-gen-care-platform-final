@@ -15,9 +15,9 @@ Phase 5) piloté par un contrat maître neutre vis-à-vis de l'agent
 présent à la racine était exclusivement `AGENTS.md`, écrit et nommé pour
 Codex ; **aucun `CLAUDE.md` n'existait à la racine**, alors que le contrat
 maître prévoit explicitement que Claude Code dispose de son propre adaptateur
-fin. Quatre artefacts documentaires (`AGENTS.md`, `CODEX_PHASE_0_PROMPT.md`,
-`README-CODEX-PHASE0.md`,
-`docs/prompts/NEXT-GEN-CARES-CODEX-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`)
+fin. Quatre artefacts documentaires (`AGENTS.md`, `docs/prompts/codex/PHASE_0_PROMPT.md`,
+`docs/prompts/codex/README-PHASE0-STARTER-PACK.md`,
+`docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`)
 étaient rédigés spécifiquement pour Codex.
 
 Constat le plus significatif de cet audit : la dernière phase de travail
@@ -51,10 +51,10 @@ aucun déploiement, aucune donnée patient réelle.
   branches locales/distantes et de l'état de l'arbre de travail.
 - Recensement de toutes les occurrences de « Codex » dans le dépôt
   (`.md`, `.yml`, `.ts`, `.json`, etc.).
-- Lecture intégrale de `AGENTS.md`, `README-CODEX-PHASE0.md`,
-  `CODEX_PHASE_0_PROMPT.md`,
-  `docs/prompts/NEXT-GEN-CARES-CODEX-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`,
-  `docs/prompts/APPOINTMENT_API_REMEDIATION_PROMPT.md`,
+- Lecture intégrale de `AGENTS.md`, `docs/prompts/codex/README-PHASE0-STARTER-PACK.md`,
+  `docs/prompts/codex/PHASE_0_PROMPT.md`,
+  `docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`,
+  `docs/prompts/claude/APPOINTMENT_API_REMEDIATION_PROMPT.md`,
   `apps/web/CLAUDE.md`, `apps/web/AGENTS.md`, `README.md`,
   `NEXT_GEN_CARE_MASTER_ENGINEERING_PROMPT.md` (sections 1 à 4, 17 et 17.1).
 - Lecture des 6 rapports de phase existants (`PHASE-0` à `PHASE-5`) et de
@@ -64,9 +64,10 @@ aucun déploiement, aucune donnée patient réelle.
 - Vérification de la présence des 11 ADR (`docs/architecture/adr/0001` à
   `0011`), des lignes de base sécurité/accessibilité
   (`docs/compliance/`), et des tâches disponibles dans `Taskfile.yml`.
-- Création de `CLAUDE.md` (racine), `CLAUDE_PHASE_0_PROMPT.md` (racine),
-  `README-CLAUDE-PHASE0.md` (racine), et
-  `docs/prompts/NEXT-GEN-CARES-CLAUDE-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`.
+- Création de `CLAUDE.md` (racine) et des prompts Claude Code initialement à
+  la racine, puis déplacement de tous les prompts (Codex comme Claude Code)
+  dans `docs/prompts/codex/` et `docs/prompts/claude/` sur demande explicite
+  de l'utilisateur, avec correction des références croisées internes.
 - Aucune commande de test ou de build n'a été exécutée pendant cet audit ;
   ce rapport ne réclame donc aucun résultat de `pnpm exec task ci`.
 
@@ -75,14 +76,14 @@ aucun déploiement, aucune donnée patient réelle.
 Créés :
 
 - `CLAUDE.md`
-- `CLAUDE_PHASE_0_PROMPT.md`
-- `README-CLAUDE-PHASE0.md`
-- `docs/prompts/NEXT-GEN-CARES-CLAUDE-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`
+- `docs/prompts/claude/PHASE_0_PROMPT.md`
+- `docs/prompts/claude/README-PHASE0-STARTER-PACK.md`
+- `docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`
 - `docs/reports/AUDIT-CODEX-CLAUDE-MIGRATION-2026-08-31.md` (ce document)
 
 Modifiés : aucun fichier existant n'a été modifié. Les fichiers Codex
-d'origine (`AGENTS.md`, `CODEX_PHASE_0_PROMPT.md`, `README-CODEX-PHASE0.md`,
-`docs/prompts/NEXT-GEN-CARES-CODEX-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`)
+d'origine (`AGENTS.md`, `docs/prompts/codex/PHASE_0_PROMPT.md`, `docs/prompts/codex/README-PHASE0-STARTER-PACK.md`,
+`docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`)
 ont été **conservés intacts**, par choix de sécurité (non-destructif) : ils
 restent l'adaptateur pour Codex et l'historique de ce qui a été réellement
 demandé lors de la refonte landing, la conversion se fait par ajout de leurs
@@ -92,6 +93,21 @@ déjà `CLAUDE.md` et cible le dépôt séparé de l'API de rendez-vous, pas ce
 dépôt.
 
 Aucun fichier supprimé.
+
+**Addendum (même session, après lecture humaine du rapport ci-dessus) :**
+sur demande explicite, tous les prompts — Codex et Claude Code — ont été
+déplacés dans des sous-répertoires dédiés : `docs/prompts/codex/` et
+`docs/prompts/claude/`. `AGENTS.md` et `CLAUDE.md` restent à la racine du
+dépôt, car c'est l'emplacement où les outils respectifs les chargent
+automatiquement. Le tableau ci-dessous reflète l'emplacement final :
+
+| Rôle | Codex | Claude Code |
+| --- | --- | --- |
+| Adaptateur racine | `AGENTS.md` | `CLAUDE.md` |
+| Déclencheur Phase 0 | `docs/prompts/codex/PHASE_0_PROMPT.md` | `docs/prompts/claude/PHASE_0_PROMPT.md` |
+| Starter pack | `docs/prompts/codex/README-PHASE0-STARTER-PACK.md` | `docs/prompts/claude/README-PHASE0-STARTER-PACK.md` |
+| Refonte landing | `docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md` | `docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md` |
+| Remédiation Appointment API | — | `docs/prompts/claude/APPOINTMENT_API_REMEDIATION_PROMPT.md` |
 
 ## 5. Décisions et ADR concernés
 
@@ -220,7 +236,7 @@ référence pour toute question de mise en production.
 Recommandation, par ordre de priorité :
 
 1. **Clore proprement la phase de refonte landing** en exécutant le prompt
-   converti `docs/prompts/NEXT-GEN-CARES-CLAUDE-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`
+   converti `docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`
    tel qu'il est maintenant rédigé : audit rétroactif contre le code tel
    qu'il existe sur `main`, exécution effective de `pnpm exec task ci` (et
    `ci:extended` si le réseau est disponible) sur l'état actuel, vérification
@@ -247,10 +263,10 @@ d'implémentation sur une phase déjà non auditée.
 ## 14. Décisions humaines nécessaires
 
 - Approuver ou non l'exécution du prompt de clôture de la refonte landing
-  (`docs/prompts/NEXT-GEN-CARES-CLAUDE-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`).
+  (`docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`).
 - Décider si les fichiers Codex d'origine (`AGENTS.md`,
-  `CODEX_PHASE_0_PROMPT.md`, `README-CODEX-PHASE0.md`,
-  `docs/prompts/NEXT-GEN-CARES-CODEX-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`)
+  `docs/prompts/codex/PHASE_0_PROMPT.md`, `docs/prompts/codex/README-PHASE0-STARTER-PACK.md`,
+  `docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`)
   doivent être conservés comme adaptateur multi-agent, marqués dépréciés, ou
   supprimés.
 - Confirmer la priorité entre « clôturer la phase landing » et « reprendre
@@ -268,7 +284,7 @@ de la phase de refonte visuelle de la landing page sur une branche dédiée.
 
 Objectif :
 - utiliser CLAUDE.md et
-  docs/prompts/NEXT-GEN-CARES-CLAUDE-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md
+  docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md
   comme instructions ;
 - auditer l'implémentation déjà mergée sur main (commits 22f6451, 9978e0b,
   c922dfa) contre les sections 21 et 27 du prompt ;

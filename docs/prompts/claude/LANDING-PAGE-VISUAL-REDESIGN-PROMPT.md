@@ -1,7 +1,7 @@
 # NEXT GEN CARES — CLAUDE CODE LANDING PAGE VISUAL REDESIGN PROMPT
 
 > Claude Code counterpart of
-> `docs/prompts/NEXT-GEN-CARES-CODEX-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`.
+> `docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`.
 >
 > **Current status (see the audit report at
 > `docs/reports/AUDIT-CODEX-CLAUDE-MIGRATION-2026-08-31.md`):** the visual

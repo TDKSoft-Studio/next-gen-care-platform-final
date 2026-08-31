@@ -1,13 +1,13 @@
 # NEXT GEN CARES — Claude Code Phase 0 Starter Pack
 
-> Claude Code counterpart of `README-CODEX-PHASE0.md`, which documents the
+> Claude Code counterpart of `docs/prompts/codex/README-PHASE0-STARTER-PACK.md`, which documents the
 > equivalent starter pack for Codex/AGENTS.md-driven agents. Use this file
 > when the working agent is Claude Code.
 
 ## Files
 
 - `CLAUDE.md` — thin Claude Code adapter. The Master Engineering Contract remains authoritative.
-- `CLAUDE_PHASE_0_PROMPT.md` — trigger prompt to paste into (or resume) a Claude Code session.
+- `docs/prompts/claude/PHASE_0_PROMPT.md` — trigger prompt to paste into (or resume) a Claude Code session.
 - `docs/architecture/PHASE-0-ARCHITECTURE-SCHEMAS.md` — architecture diagram schemas and acceptance checklist.
 - `docs/architecture/adr/ADR-TEMPLATE.md` — ADR template.
 - `docs/reports/PHASE-0-REPORT-TEMPLATE.md` — French report template.
@@ -19,8 +19,8 @@
 NEXT_GEN_CARE_MASTER_ENGINEERING_PROMPT.md
 AGENTS.md
 CLAUDE.md
-CLAUDE_PHASE_0_PROMPT.md
-README-CLAUDE-PHASE0.md
+docs/prompts/claude/PHASE_0_PROMPT.md
+docs/prompts/claude/README-PHASE0-STARTER-PACK.md
 
 docs/
   architecture/
@@ -48,7 +48,7 @@ The individual Phase 0 architecture files are intentionally created by Claude Co
 
 1. Put the Master Engineering Contract at the repository root.
 2. Put `CLAUDE.md` at the repository root (Claude Code loads it automatically at session start).
-3. Paste `CLAUDE_PHASE_0_PROMPT.md` into the Claude Code session, or reference it explicitly (`@CLAUDE_PHASE_0_PROMPT.md`).
+3. Paste `docs/prompts/claude/PHASE_0_PROMPT.md` into the Claude Code session, or reference it explicitly (`@docs/prompts/claude/PHASE_0_PROMPT.md`).
 4. Let Claude Code perform Phase 0 only.
 5. Review the generated artifacts and French report.
 6. Make the human decision.

@@ -1,6 +1,6 @@
 # CLAUDE CODE TRIGGER — NEXT GEN CARES — PHASE 0
 
-> Claude Code counterpart of `CODEX_PHASE_0_PROMPT.md`. Phase 0 has already
+> Claude Code counterpart of `docs/prompts/codex/PHASE_0_PROMPT.md`. Phase 0 has already
 > been executed and approved for this repository (`docs/reports/PHASE-0-REPORT.md`).
 > This file is kept as the reusable, canonical Phase-0 trigger for Claude
 > Code — reuse it verbatim when bootstrapping a new NEXT GEN CARES-derived
