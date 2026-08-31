@@ -101,13 +101,13 @@ déplacés dans des sous-répertoires dédiés : `docs/prompts/codex/` et
 dépôt, car c'est l'emplacement où les outils respectifs les chargent
 automatiquement. Le tableau ci-dessous reflète l'emplacement final :
 
-| Rôle | Codex | Claude Code |
-| --- | --- | --- |
-| Adaptateur racine | `AGENTS.md` | `CLAUDE.md` |
-| Déclencheur Phase 0 | `docs/prompts/codex/PHASE_0_PROMPT.md` | `docs/prompts/claude/PHASE_0_PROMPT.md` |
-| Starter pack | `docs/prompts/codex/README-PHASE0-STARTER-PACK.md` | `docs/prompts/claude/README-PHASE0-STARTER-PACK.md` |
-| Refonte landing | `docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md` | `docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md` |
-| Remédiation Appointment API | — | `docs/prompts/claude/APPOINTMENT_API_REMEDIATION_PROMPT.md` |
+| Rôle                        | Codex                                                       | Claude Code                                                  |
+| --------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------ |
+| Adaptateur racine           | `AGENTS.md`                                                 | `CLAUDE.md`                                                  |
+| Déclencheur Phase 0         | `docs/prompts/codex/PHASE_0_PROMPT.md`                      | `docs/prompts/claude/PHASE_0_PROMPT.md`                      |
+| Starter pack                | `docs/prompts/codex/README-PHASE0-STARTER-PACK.md`          | `docs/prompts/claude/README-PHASE0-STARTER-PACK.md`          |
+| Refonte landing             | `docs/prompts/codex/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md` | `docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md` |
+| Remédiation Appointment API | —                                                           | `docs/prompts/claude/APPOINTMENT_API_REMEDIATION_PROMPT.md`  |
 
 ## 5. Décisions et ADR concernés
 
@@ -190,7 +190,7 @@ Aucune donnée patient réelle ni secret n'a été observé pendant cet audit.
   refonte. Aucune preuve que lint/typecheck/tests unitaires/a11y/build
   restent verts après ces commits.
 - **Approvisionnement photographique landing v2** : `docs/brand/
-  LANDING_V2_IMAGE_SOURCES.md` existe mais n'a pas été audité en détail dans
+LANDING_V2_IMAGE_SOURCES.md` existe mais n'a pas été audité en détail dans
   cette session ; le prompt de refonte impose une licence et une source
   enregistrées par image avant utilisation en production — à vérifier
   explicitement lors de la clôture de cette phase.

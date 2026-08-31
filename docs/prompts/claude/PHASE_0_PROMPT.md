@@ -121,7 +121,7 @@ The inventory MUST cover:
 | Delivery      | local setup, CI, images, deployment, environments                                                  |
 | Operations    | health endpoints, telemetry, alerts, SLOs, runbooks, recovery                                      |
 | Tenancy       | tenant keys, isolation, quotas, configuration boundaries                                           |
-| Compatibility | implementation vs OpenAPI mismatches                                                                |
+| Compatibility | implementation vs OpenAPI mismatches                                                               |
 
 Never print secrets.
 
