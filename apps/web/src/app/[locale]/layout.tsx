@@ -76,6 +76,13 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       <body>
         <SkipLink>{translate(locale, "foundation.skip_to_content")}</SkipLink>
         <header className="site-header">
+          <div className="contact-strip">
+            <div className="contact-strip__inner">
+              <a href="tel:+32460960294">+32 460 96 02 94</a>
+              <a href="mailto:hello@nextgen-cares.org">hello@nextgen-cares.org</a>
+              <span>nextgen-cares.org</span>
+            </div>
+          </div>
           <div className="site-header__inner">
             <a className="brand-lockup" href={localePath(locale)}>
               <Image
@@ -89,18 +96,23 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
               />
               <span className="brand-lockup__name">{translate(locale, "foundation.brand")}</span>
             </a>
-            <LocaleSwitcher currentLocale={locale} />
+            <div className="site-header__actions">
+              <LocaleSwitcher currentLocale={locale} />
+              <a className="site-header__contact" href="mailto:hello@nextgen-cares.org">
+                {translate(locale, "foundation.contact_cta")}
+              </a>
+            </div>
+          </div>
+          <div className="site-nav">
+            <MainNav
+              label={translate(locale, "foundation.primary_navigation")}
+              items={domainRoutes.map((route) => ({
+                href: localePath(locale, route.path),
+                label: translate(locale, route.translationKey)
+              }))}
+            />
           </div>
         </header>
-        <div className="site-nav">
-          <MainNav
-            label={translate(locale, "foundation.primary_navigation")}
-            items={domainRoutes.map((route) => ({
-              href: localePath(locale, route.path),
-              label: translate(locale, route.translationKey)
-            }))}
-          />
-        </div>
         {children}
         <CookieConsentBanner locale={locale} />
         <footer className="site-footer">

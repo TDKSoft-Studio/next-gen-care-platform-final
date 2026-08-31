@@ -91,6 +91,87 @@ Do not distribute arbitrary HEX, RGB, HSL or Tailwind colors throughout the sour
 
 ---
 
+## 2.1 APPROVED LANDING V2 DIRECTION
+
+This direction has explicit Human Engineering Authority approval. It is a
+visual and information-design brief, not authorization to change routes, forms,
+business logic, legal claims, or backend contracts.
+
+### Public identity and contact hierarchy
+
+Use **NEXTGEN CARES SRL** as the public-facing wordmark. Present the following
+approved public contact references in the contact strip, subject to responsive
+and accessibility requirements:
+
+- phone: `+32 460 96 02 94`;
+- email: `hello@nextgen-cares.org`;
+- domain: `nextgen-cares.org`.
+
+### Visual character
+
+The landing page must feel premium, editorial, and reassuring. It must balance
+healthcare, well-being, and Health-Tech without becoming a hospital template,
+a generic SaaS page, or a spa aesthetic.
+
+Use warm ivory as the page base, deep green as the dominant functional color,
+and gold as a restrained accent. The Mindful Trip blue and orange palette may
+appear only in the endorsed travel and well-being sub-brand area.
+
+The PDF references `public/brand/Next_Gen_Care_Landing01.pdf` and
+`public/brand/Next_Gen_Care_Landing02.pdf` define the intended compositional
+language: generous editorial whitespace, monumental serif display typography,
+compact contact/navigation hierarchy, and clear green-and-gold dividers. They
+are inspiration, not literal layouts to copy.
+
+### Approved landing composition
+
+Implement the following hierarchy after implementation approval:
+
+1. A compact contact strip with the approved phone, email, and domain.
+2. A localized primary header with the global logo, domain navigation, language
+   selector, and prominent contact CTA.
+3. A generous hero combining human photography with restrained brand forms.
+   Its message must foreground the alliance of care, well-being, and
+   Health-Tech.
+4. Two hero CTAs: a primary action to discover the domains and a secondary
+   action to the platform commitments. Replace the generic “Notre approche
+   éditoriale” action with the commitments action.
+5. Five rich editorial service sections, each combining a visual, explanatory
+   content, a controlled service nuance, and a CTA to its existing domain route.
+6. A visible Mindful Healing Trips sub-brand section, endorsed by NEXTGEN CARES
+   SRL and using only its supplied logo and brand assets.
+7. A concise trust/commitments section based only on approved existing content,
+   followed by a contact-oriented closing CTA and footer.
+
+Do not create a new form, route, contact workflow, clinical promise, price,
+service availability statement, or qualification claim as part of this visual
+work.
+
+### Photography and illustration policy
+
+Source external photos only after a Human Engineering Authority has approved
+the exact asset list. Each accepted asset must have a recorded source URL,
+author where available, license evidence, local filename, accessible alt text,
+and intended placement before it is downloaded.
+
+Use locally stored and framework-optimized images in production; do not render
+external image URLs at runtime. Select imagery according to these rules:
+
+- Home care: human accompaniment or professional care without depicting an
+  identifiable person as ill, vulnerable, or in treatment.
+- Operating room: professional preparation or teamwork, with no exposed
+  patient or procedure.
+- Well-being: non-medical movement, nature, or human connection.
+- Travel: aspirational destination or group imagery, paired with the real
+  Mindful Healing Trips sub-brand.
+- Health-Tech: a credible professional/digital-health setting or a restrained
+  technology detail, not generic neon technology art.
+
+Do not imply medical endorsement, diagnosis, clinical outcome, or commercial
+endorsement by a depicted person or organization.
+
+---
+
 # 3. DESIGN SYSTEM REQUIREMENT
 
 Create or update a centralized design-token system.
@@ -202,11 +283,10 @@ Do not remove important content arbitrarily.
 
 Preferred direction:
 
-- transparent or visually lightweight header over the Hero where appropriate;
-- transition to a light / warm background when scrolling;
-- subtle elevation, blur, shadow or border if justified;
-- highly readable navigation;
-- clear primary CTA;
+- compact approved contact strip above the header;
+- visually lightweight header on a warm ivory background;
+- highly readable localized navigation;
+- a clear “Nous contacter” CTA, without inventing its destination or workflow;
 - equally polished mobile navigation.
 
 Avoid excessive glassmorphism.
@@ -237,7 +317,11 @@ The Hero must rapidly communicate:
 2. healthcare,
 3. human care,
 4. professionalism,
-5. modernity.
+5. modernity,
+6. the alliance of care, well-being, and Health-Tech.
+
+Use a human photographic direction and restrained brand forms. The two hero
+actions must prioritize domain discovery and the platform commitments.
 
 It must not look like a generic SaaS landing page.
 
@@ -279,7 +363,9 @@ Organic, softer, warmer and comforting.
 
 More experiential, lively and aspirational, while remaining elegant.
 
-Use the supplied Mindful Trip logo and brand board for this sub-brand only. Preserve clear NEXT GEN CARES endorsement, controlled logo sizing, responsive display, and accessible alternative text.
+Use the supplied Mindful Trip logo and brand board for this visible, endorsed
+sub-brand area only. Preserve clear NEXTGEN CARES SRL endorsement, controlled
+logo sizing, responsive display, and accessible alternative text.
 
 ## Health-Tech
 

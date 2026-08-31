@@ -631,6 +631,35 @@ Redact or omit personal and health data from telemetry. Build alerts from user i
 
 Logo production is outside this project. Use a replaceable temporary wordmark or neutral placeholder that does not become a de facto final logo.
 
+### 17.1 Approved landing-page design direction
+
+The public-facing wordmark is **NEXTGEN CARES SRL**. The approved public
+contact references are `+32 460 96 02 94`, `hello@nextgen-cares.org`, and
+`nextgen-cares.org`.
+
+The public landing page must express a premium, editorial, reassuring balance
+of healthcare, well-being, and Health-Tech. It must use a warm ivory base,
+deep green as the dominant functional color, and restrained gold accents.
+Mindful Trip blue and orange remain limited to the Mindful Trip sub-brand.
+
+The landing page must provide:
+
+- a compact contact strip;
+- a clear localized primary navigation and a prominent contact CTA;
+- a generous editorial hero with a human photographic direction and restrained
+  brand forms;
+- a primary hero CTA to discover the domains and a secondary CTA to the
+  platform's commitments, not a generic editorial-approach CTA;
+- five rich, visually distinct editorial service sections, each with a CTA to
+  its existing domain route;
+- a visible, endorsed Mindful Healing Trips sub-brand area.
+
+Images must be locally served, optimized, accessible, and traceable to an
+approved license and source. Never use imagery that presents an identifiable
+person as ill, vulnerable, in treatment, or as endorsing a service without
+appropriate authorization. Do not add images, contacts, routes, forms, or
+claims that have not been explicitly approved.
+
 ---
 
 ## 18. Testing and quality gates
