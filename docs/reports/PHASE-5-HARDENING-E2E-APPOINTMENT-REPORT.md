@@ -1,12 +1,25 @@
 # Rapport — Durcissement Phase 5 (1/3) : couverture E2E rendez-vous
 
 Date : 31 août 2026
-Branche : `claude/audit-codex-claude-migration-vhehdd`
+Branche : `claude/audit-codex-claude-migration-vhehdd` (pull request
+[#10](https://github.com/TDKSoft-Studio/next-gen-care-platform-final/pull/10))
 Périmètre : premier des trois éléments du backlog de durcissement pré-staging
 approuvé en Phase 5 (`docs/reports/PHASE-5-RELEASE-READINESS-REPORT.md`,
 section 15) — ajout d'une couverture E2E déterministe du parcours public
 rendez-vous `PAY_ON_SITE`. Les deux autres éléments (artefact OpenAPI piné,
-gate contrat réel) sont **bloqués**, voir section 9.
+gate contrat réel) sont **bloqués par deux défauts réels découverts dans le
+dépôt Appointment API pendant cette session**, voir section 9.
+
+> **Mise à jour (même session) :** après approbation humaine, le dépôt
+> `TDKSoft-Studio/nurse-appointment-scheduling-api` a été attaché en lecture
+> seule et cloné (commit `aa504c2633a9efe64690288f5b55c2f5024259d1`, tip de
+> `main`) pour tenter de générer l'artefact OpenAPI accepté. La tentative a
+> découvert deux défauts bloquants dans ce dépôt séparé, indépendants de cet
+> environnement : sa suite de tests ne compile pas, et deux migrations
+> Flyway partagent le même numéro de version, empêchant l'application de
+> démarrer contre une base de données neuve. Aucune correction n'a été
+> appliquée dans ce dépôt (hors périmètre). Voir section 9 pour le détail et
+> les preuves.
 
 ## 1. Résumé exécutif
 
@@ -24,8 +37,9 @@ indisponible, message d'erreur affiché, pas de confirmation).
 
 Les 8 tests Playwright du dépôt (6 existants + 2 nouveaux) passent, ainsi
 que `pnpm exec task ci` dans son intégralité. Verdict : **GO** pour ce seul
-élément du backlog ; les deux autres éléments restent bloqués en dehors du
-périmètre de ce dépôt (section 9).
+élément du backlog ; les deux autres éléments restent bloqués, cette fois
+par deux défauts vérifiés dans le dépôt Appointment API lui-même (section 9),
+et non plus par un simple manque d'accès.
 
 ## 2. Objectif et périmètre autorisé
 
@@ -81,7 +95,19 @@ pnpm exec eslint tests/e2e/home-care-appointment.spec.ts --max-warnings=0
 pnpm --filter @next-gen-care/web dev --hostname 127.0.0.1 --port 3100
 pnpm exec playwright test --project=chromium --config=<config locale, executablePath Chromium pré-installé, reuseExistingServer:true>
 pnpm exec task ci
+git clone --depth 1 https://github.com/TDKSoft-Studio/nurse-appointment-scheduling-api /home/user/nurse-appointment-scheduling-api
+service postgresql start
+su postgres -c "psql -c \"CREATE ROLE nurse_scheduling LOGIN PASSWORD 'nurse_scheduling';\""
+su postgres -c "psql -c \"CREATE DATABASE nurse_scheduling OWNER nurse_scheduling;\""
+redis-server --daemonize yes --port 6379
+bash backend/scripts/generate-openapi.sh
+./mvnw --batch-mode -q spring-boot:run   # (échec testCompile, voir section 9.1)
+./mvnw --batch-mode -q -Dmaven.test.skip=true spring-boot:run   # (échec Flyway V17, voir section 9.2)
 ```
+
+Ces trois dernières commandes ont été exécutées dans le clone local de
+`nurse-appointment-scheduling-api` uniquement pour observer le comportement
+réel de l'application ; aucune n'a modifié un fichier de ce dépôt.
 
 ## 7. Tests, contrôles et résultats factuels
 
@@ -122,20 +148,51 @@ vérifie aussi la présence de l'en-tête `Idempotency-Key` sur les requêtes
 
 ## 9. Écarts, risques et dette explicitement acceptée
 
-- **Élément bloqué — artefact OpenAPI piné** : le backlog Phase 5 demande de
-  « référencer/verser l'artefact OpenAPI accepté ». Cet artefact appartient
-  au dépôt séparé Nurse Appointment Scheduling API, qui n'est pas attaché à
-  cette session (aucun `add_repo` n'a été fait pour lui, et aucune décision
-  humaine sur son emplacement final n'a été prise — Phase 5 rapport
-  section 14). Je ne peux pas fabriquer ou copier cet artefact sans y avoir
-  accès réel : le faire violerait la discipline de preuve du contrat maître
-  (« Never invent … API behavior »). **Reste bloqué en attente d'accès au
-  dépôt ou de decision humaine sur son emplacement.**
+- **Élément bloqué — artefact OpenAPI piné, cause racine identifiée** : le
+  dépôt `TDKSoft-Studio/nurse-appointment-scheduling-api` a été attaché en
+  lecture seule et cloné (commit `aa504c2633a9efe64690288f5b55c2f5024259d1`)
+  pour tenter de générer l'artefact via `backend/scripts/generate-openapi.sh`.
+  Deux défauts bloquants ont été trouvés dans ce dépôt séparé, tous deux
+  vérifiés directement dans le code source (indépendants de cet
+  environnement) :
+  1. **Suite de tests non compilable** : `AppointmentServiceTest.java`
+     appelle `ConfirmAppointmentRequest.patient()`, alors que
+     l'enregistrement réel (`ConfirmAppointmentRequest.java`) expose
+     `.client()` et non `.patient()` ; le test référence aussi
+     `NURSE_ID`/`nurseId`, absents du code de production actuel. La
+     commande `./mvnw spring-boot:run` échoue en `testCompile` avant même de
+     démarrer, car ce goal Spring Boot force la compilation des sources de
+     test.
+  2. **Collision de version Flyway** : `backend/src/main/resources/db/
+migration/` contient deux fichiers `V17__appointment_review_workflow.sql`
+     et `V17__phase12_rename_practitioner_client.sql` portant le même
+     numéro de version. Une fois la compilation des tests contournée
+     (`-Dmaven.test.skip=true`, uniquement local, aucun fichier modifié dans
+     ce dépôt), l'application échoue au démarrage contre une base
+     PostgreSQL neuve avec `FlywayException: Found more than one migration
+with version 17`.
+
+     Conséquence : **toute instance fraîche de cette API — CI avec base
+     neuve, staging, ou tout environnement partant d'une base vide —
+     échoue actuellement au démarrage sur `main`.** C'est très probablement
+     la raison pour laquelle l'artefact OpenAPI n'a jamais été généré et
+     piné : l'équipe API elle-même ne peut pas le régénérer proprement dans
+     cet état, indépendamment de toute action du portail.
+
+  Aucune correction n'a été appliquée dans ce dépôt séparé (hors périmètre
+  et explicitement interdit par le contrat maître et par `CLAUDE.md` de ce
+  dépôt : « do not alter the separately owned appointment API repository »).
+  L'environnement local (PostgreSQL, Redis, processus Java) utilisé pour
+  cette tentative a été arrêté ; aucun commit, aucune modification n'a été
+  faite dans `nurse-appointment-scheduling-api`. **Reste bloqué en attente
+  de correction par l'équipe propriétaire de ce dépôt.**
+
 - **Élément bloqué — gate contrat réel** : remplacer
   `scripts/check-phase-gate.mjs contract` (statut
   `MANUAL_APPOINTMENT_ADAPTER_ONLY`) par une vérification factuelle de
   compatibilité OpenAPI nécessite l'artefact ci-dessus. **Reste bloqué pour
-  la même raison.**
+  la même raison ; aggravé par le fait que l'API elle-même ne démarre pas
+  actuellement contre une base neuve.**
 - Le test E2E mocke la frontière réseau du navigateur
   (`page.route`), pas les routes serveur Next.js elles-mêmes : il ne
   prouve donc pas que les routes serveur transforment correctement une
@@ -165,35 +222,46 @@ chaque exécution. Aucun déploiement n'a eu lieu.
 
 **GO** pour cet élément isolé (couverture E2E rendez-vous) : livré, testé,
 sans régression. **BLOCKED** pour les deux autres éléments du backlog Phase
-5 (artefact OpenAPI, gate contrat réel), faute d'accès au dépôt Appointment
-API ou de décision humaine sur son emplacement. Le verdict global
-**NO-GO production** hérité de la Phase 5 reste inchangé : cette session ne
-lève pas ce verdict, elle réduit un seul des risques qui le motivaient.
+5 (artefact OpenAPI, gate contrat réel) — non plus faute d'accès, mais parce
+que le dépôt Appointment API attaché contient deux défauts qui l'empêchent
+de démarrer contre une base neuve (section 9). Le verdict global **NO-GO
+production** hérité de la Phase 5 reste inchangé et se **renforce** : un
+défaut empêchant le démarrage de l'API sur `main` est un risque de
+production supplémentaire, indépendant du portail.
 
 ## 13. Suite recommandée et justification
 
-Pour débloquer les deux éléments restants, l'une de ces actions humaines est
-nécessaire :
+La priorité immédiate n'est plus l'artefact OpenAPI lui-même, mais les deux
+défauts qui empêchent de le générer :
 
-1. Attacher le dépôt Nurse Appointment Scheduling API à une session future
-   (`add_repo` côté Claude Code) afin d'en extraire l'artefact OpenAPI
-   réellement accepté ; ou
-2. Fournir directement l'artefact OpenAPI accepté (fichier ou URL versionnée)
-   pour qu'il soit intégré et piné dans ce dépôt ; ou
-3. Confirmer explicitement que ces deux éléments restent hors périmètre pour
-   l'instant et que la Phase 5 est close avec cette réserve documentée.
-
-Recommandation : option 1, la plus directe, si ce dépôt existe et est
-accessible — elle permet de vérifier l'état réel du contrat plutôt que de
-travailler sur une hypothèse.
+1. **Signaler les deux défauts à l'équipe/au propriétaire du dépôt
+   Appointment API** (test `AppointmentServiceTest.java` désynchronisé du
+   code de production ; collision de version Flyway `V17`), avec les
+   preuves de cette section. C'est un préalable à toute génération
+   d'artefact OpenAPI, que ce travail soit fait par ce portail ou par
+   l'équipe API elle-même.
+2. Une fois ces défauts corrigés **dans le dépôt Appointment API, sous son
+   autorité propre** (jamais par ce portail), régénérer réellement
+   l'artefact OpenAPI, l'accepter formellement, puis reprendre le
+   référencement/versionnement et le remplacement du gate contrat dans ce
+   dépôt portail.
+3. Dans l'intervalle, le gate `MANUAL_APPOINTMENT_ADAPTER_ONLY` reste le
+   statut honnête à afficher : il ne prétend pas à une compatibilité
+   contractuelle qu'aucun artefact actuel ne permet de vérifier.
 
 ## 14. Décisions humaines nécessaires
 
-- Choisir parmi les options 1 à 3 de la section 13.
+- Décider qui corrige les deux défauts du dépôt Appointment API (son
+  équipe/propriétaire, selon la séparation de responsabilité déjà actée) et
+  selon quel calendrier.
 - Confirmer si la couverture E2E ajoutée ici est jugée suffisante pour ce
   seul élément du backlog Phase 5, ou si une couverture supplémentaire
   (annulation, replanification, confirmation/rejet administratif) est
   requise avant de considérer le parcours rendez-vous comme durci.
+- Décider si ces deux défauts doivent être suivis comme un risque formel
+  dans le registre déjà tenu par le dépôt Appointment API (`RK-*`, selon sa
+  propre convention documentée dans son `CLAUDE.md`) ou communiqués
+  directement à son équipe hors de cet outillage.
 - Toute décision fournisseur, RGPD/DPIA, clinique/juridique, staging ou
   production reste soumise à l'Human Engineering Authority.
 
@@ -201,22 +269,23 @@ travailler sur une hypothèse.
 
 ```text
 J'approuve ce rapport de durcissement Phase 5 (1/3, couverture E2E
-rendez-vous) et j'attache le dépôt Nurse Appointment Scheduling API à cette
-session pour en extraire l'artefact OpenAPI réellement accepté.
+rendez-vous) et je prends note des deux défauts découverts dans le dépôt
+Appointment API (test AppointmentServiceTest désynchronisé, collision de
+version Flyway V17).
 
-Objectif :
-- lire en lecture seule le dépôt Appointment API attaché ;
-- identifier et extraire l'artefact OpenAPI actuellement exposé, avec son
-  empreinte et sa version ;
-- proposer, sans l'imposer, un emplacement de stockage versionné dans ce
-  dépôt portail (ou une référence externe versionnée) pour cet artefact ;
-- remplacer scripts/check-phase-gate.mjs (mode contract) par une
-  vérification factuelle de compatibilité contre cet artefact, uniquement
-  après validation de l'emplacement choisi ;
+Objectif pour la suite :
+- ne pas modifier le dépôt Appointment API depuis ce portail ;
+- une fois ces deux défauts corrigés par l'équipe propriétaire de ce dépôt
+  et un artefact OpenAPI réellement généré et accepté, reprendre ce
+  backlog : référencer/verser cet artefact dans ce dépôt portail (ou une
+  référence externe versionnée), puis remplacer
+  scripts/check-phase-gate.mjs (mode contract) par une vérification
+  factuelle de compatibilité ;
+- en attendant, conserver le statut MANUAL_APPOINTMENT_ADAPTER_ONLY comme
+  statut honnête, sans prétendre à une compatibilité non vérifiable ;
 - exécuter pnpm exec task ci et la suite Playwright pour confirmer
-  l'absence de régression ;
-- ne pas déployer, ne pas modifier l'infrastructure production, ne pas
-  modifier le dépôt Appointment API lui-même ;
+  l'absence de régression à chaque étape ;
+- ne pas déployer, ne pas modifier l'infrastructure production ;
 - produire un rapport français à 16 sections et s'arrêter au gate humain.
 
 Toute décision provider, RGPD, clinique, juridique, staging ou production
@@ -225,7 +294,9 @@ reste soumise à validation humaine explicite.
 
 ## 16. Confirmation d'arrêt au gate humain
 
-Cette session s'arrête ici pour les deux éléments bloqués. Aucun accès au
-dépôt Appointment API, aucune fabrication d'artefact OpenAPI, aucune
-modification du gate contrat n'a été tentée sans les preuves nécessaires.
-J'attends la décision humaine de la section 14 avant de poursuivre.
+Cette session s'arrête ici pour les deux éléments bloqués. Le dépôt
+Appointment API a été attaché et cloné en lecture seule sur autorisation
+humaine explicite ; aucune modification n'y a été faite, aucun artefact
+OpenAPI n'a été fabriqué ou copié, et aucune modification du gate contrat
+n'a été tentée sans les preuves nécessaires. J'attends la décision humaine
+de la section 14 avant de poursuivre.
