@@ -7,6 +7,22 @@ landing page déjà mergée sur `main` (commits `22f6451`, `9978e0b`,
 `c922dfa`), exécutée sous
 `docs/prompts/claude/LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`.
 
+> **Errata (même session, après approbation humaine de la correction
+> proposée en section 13) :** en préparant la correction de l'écart
+> `prefers-reduced-motion`, l'inspection s'est étendue à
+> `packages/ui/styles/foundation.css`, qui n'avait pas été greffé au
+> périmètre du `grep` initial (limité à `apps/web/src` et
+> `apps/web/public`). Une règle `@media (prefers-reduced-motion: reduce)`
+> y existe déjà (ligne 119), neutralise `transition-duration` sur tous les
+> éléments avec `!important`, et est importée globalement via
+> `apps/web/src/app/[locale]/layout.tsx` (`import
+"@next-gen-care/ui/foundation.css"`) avant `global.css`. **L'écart décrit
+> ci-dessous dans ce rapport n'existe donc pas** : aucune correction de code
+> n'a été appliquée. Les sections 1, 8, 9, 12, 13, 14, 15 et 16 restent
+> inchangées ci-dessous pour préserver la trace de l'analyse initiale, mais
+> doivent être lues à la lumière de cet errata plutôt que comme un écart
+> réel restant à trancher.
+
 ## 1. Résumé exécutif
 
 La refonte visuelle de la landing page NEXTGEN CARES (palette verte/or sur
@@ -282,3 +298,14 @@ Cette clôture s'arrête ici. Aucune correction de code, aucun commit sur
 à partir de ces seules constatations. J'attends l'approbation explicite du
 Human Engineering Authority avant de corriger l'écart `prefers-reduced-
 motion` ou de reprendre le backlog Phase 5.
+
+## 17. Verdict final (après errata)
+
+Compte tenu de l'errata en tête de ce document, le seul écart conditionnant
+le verdict de la section 12 n'existe pas. **Verdict final : GO** pour
+considérer le volet ingénierie de la refonte landing v2 comme clos, sans
+correction de code nécessaire. Cela ne change rien au **NO-GO production**
+global hérité de la Phase 5, et n'autorise ni ne recommande une mise en
+production. Le backlog Phase 5 (E2E rendez-vous déterministe, contrat
+OpenAPI piné, gate contrat réel) reste la suite recommandée, sur
+autorisation humaine distincte.
