@@ -14,7 +14,7 @@ test.describe("Dutch negotiation", () => {
     await expect(page).toHaveURL(/\/nl$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "nl");
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Trajecten, teams en projecten"
+      "De alliantie van zorg, welzijn en Health-Tech"
     );
   });
 });
