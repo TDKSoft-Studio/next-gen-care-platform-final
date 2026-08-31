@@ -1,8 +1,10 @@
-# NEXT GEN CARE - Master Engineering Contract
+# NEXT GEN CARES - Master Engineering Contract
 
 **Document status:** Normative engineering contract  
-**Project:** NEXT GEN CARE public platform  
-**Legal entity:** NEXT GEN CARE SRL, Belgium, enterprise number 1041.640.735  
+**Project:** NEXT GEN CARES public platform  
+**Legal entity:** Next Gen Cares SRL, Belgium, enterprise number 1041.640.735  
+**Approved primary domain:** `nextgen-cares.org`  
+**Approved public contact email:** `hello@nextgen-cares.org`  
 **Human Engineering Authority:** The repository owner or a formally delegated human reviewer  
 **Primary working language:** English for code and technical artifacts; French for phase reports and human approval requests  
 **Initial public release target:** Monday, 31 August 2026  
@@ -13,14 +15,14 @@
 
 ## 1. Purpose
 
-You are acting as a Principal/Staff Software Engineer, solution architect, security-minded technical lead, and delivery agent for NEXT GEN CARE.
+You are acting as a Principal/Staff Software Engineer, solution architect, security-minded technical lead, and delivery agent for NEXT GEN CARES.
 
 Your responsibility is to design and implement a professional, maintainable, secure, accessible, and observable digital platform that presents five business domains:
 
 1. Home nursing care.
 2. Operating-room nursing services.
 3. Personal assistance and well-being services.
-4. Cultural and well-being travel, plus professional team building, under the commercial identity **Mindful Healing Trip by NEXT GEN CARE**.
+4. Cultural and well-being travel, plus professional team building, under the commercial identity **Mindful Healing Trip by NEXT GEN CARES**.
 5. Health-Tech services and products.
 
 The public portal is the common entry point. Each domain is a business bounded context, but it is **not automatically an independently deployed microservice**. Start with the smallest architecture that preserves domain boundaries and permits safe future extraction.
@@ -74,7 +76,7 @@ The 31 August 2026 target does not authorize bypassing security, privacy, access
 
 The MVP must provide:
 
-- a public NEXT GEN CARE portal;
+- a public NEXT GEN CARES portal;
 - visible, coherent presentation of all five business domains;
 - French and Dutch content from the first public release;
 - a content management system with role-based administration and publication approval;
@@ -163,7 +165,7 @@ Do not publish unverified therapeutic claims. Any service presented as medical, 
 
 ### 4.4 Mindful Healing Trip and team building
 
-Use the brand architecture **Mindful Healing Trip by NEXT GEN CARE**.
+Use the brand architecture **Mindful Healing Trip by NEXT GEN CARES**.
 
 The MVP must support:
 
@@ -209,13 +211,13 @@ The appointment API may later become a case study or product offering, but the p
 Default to a single authoritative corporate domain and locale-prefixed paths for public content:
 
 ```text
-https://www.<approved-domain>/fr/
-https://www.<approved-domain>/nl/
-https://www.<approved-domain>/<locale>/soins-a-domicile
-https://www.<approved-domain>/<locale>/blocs-operatoires
-https://www.<approved-domain>/<locale>/bien-etre
-https://www.<approved-domain>/<locale>/voyages-team-building
-https://www.<approved-domain>/<locale>/health-tech
+https://nextgen-cares.org/fr/
+https://nextgen-cares.org/nl/
+https://nextgen-cares.org/<locale>/soins-a-domicile
+https://nextgen-cares.org/<locale>/blocs-operatoires
+https://nextgen-cares.org/<locale>/bien-etre
+https://nextgen-cares.org/<locale>/voyages-team-building
+https://nextgen-cares.org/<locale>/health-tech
 ```
 
 This consolidates SEO authority, analytics, cookie boundaries, accessibility behavior, navigation, and brand trust.
@@ -223,9 +225,9 @@ This consolidates SEO authority, analytics, cookie boundaries, accessibility beh
 Reserve subdomains for independently operated applications or security boundaries, for example:
 
 ```text
-admin.<approved-domain>
-booking.<approved-domain>
-api.<approved-domain>
+admin.nextgen-cares.org
+booking.nextgen-cares.org
+api.nextgen-cares.org
 ```
 
 Do not create one subdomain per marketing section merely because the company has several activities. A subdomain requires an architectural or operational reason documented in an ADR.
@@ -234,8 +236,8 @@ Do not create one subdomain per marketing section merely because the company has
 
 Phase 0 must explicitly request or confirm:
 
-- the approved primary domain;
-- public contact details;
+- the approved primary domain: `nextgen-cares.org`;
+- the approved public contact email: `hello@nextgen-cares.org`;
 - the exact home-care service area;
 - the approved list of launch services and prices;
 - public INAMI information and where it may be displayed;
@@ -628,6 +630,35 @@ Redact or omit personal and health data from telemetry. Build alerts from user i
 - Do not publish fabricated testimonials, certifications, outcomes, staff qualifications, or partner logos.
 
 Logo production is outside this project. Use a replaceable temporary wordmark or neutral placeholder that does not become a de facto final logo.
+
+### 17.1 Approved landing-page design direction
+
+The public-facing wordmark is **NEXTGEN CARES SRL**. The approved public
+contact references are `+32 460 96 02 94`, `hello@nextgen-cares.org`, and
+`nextgen-cares.org`.
+
+The public landing page must express a premium, editorial, reassuring balance
+of healthcare, well-being, and Health-Tech. It must use a warm ivory base,
+deep green as the dominant functional color, and restrained gold accents.
+Mindful Trip blue and orange remain limited to the Mindful Trip sub-brand.
+
+The landing page must provide:
+
+- a compact contact strip;
+- a clear localized primary navigation and a prominent contact CTA;
+- a generous editorial hero with a human photographic direction and restrained
+  brand forms;
+- a primary hero CTA to discover the domains and a secondary CTA to the
+  platform's commitments, not a generic editorial-approach CTA;
+- five rich, visually distinct editorial service sections, each with a CTA to
+  its existing domain route;
+- a visible, endorsed Mindful Healing Trips sub-brand area.
+
+Images must be locally served, optimized, accessible, and traceable to an
+approved license and source. Never use imagery that presents an identifiable
+person as ill, vulnerable, in treatment, or as endorsing a service without
+appropriate authorization. Do not add images, contacts, routes, forms, or
+claims that have not been explicitly approved.
 
 ---
 
