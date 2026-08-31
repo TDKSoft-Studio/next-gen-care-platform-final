@@ -1,21 +1,46 @@
 :root {
   color-scheme: light;
 
-  --ngc-color-ink: #142b30;
-  --ngc-color-ink-muted: #456069;
-  --ngc-color-surface: #fffdf8;
+  /* Brand primitives: global NEXT GEN CARE identity. */
+  --ngc-green-950: #20392b;
+  --ngc-green-800: #3f5f46;
+  --ngc-green-700: #587452;
+  --ngc-green-100: #e8f0e5;
+  --ngc-sage-200: #cfdcc8;
+  --ngc-gold-800: #875d0d;
+  --ngc-gold-700: #a57416;
+  --ngc-gold-100: #f6e8c7;
+  --ngc-ivory-50: #fffdf8;
+  --ngc-warm-100: #f5f1e8;
+  --ngc-warm-200: #e6ddcf;
+
+  /* Mindful Trip primitives: limited to the travel sub-brand. */
+  --ngc-mindful-brown: #3a2113;
+  --ngc-mindful-ocean: #1c5b71;
+  --ngc-mindful-sun: #e48e51;
+  --ngc-mindful-gold: #e4af56;
+  --ngc-mindful-sand: #edd1ad;
+  --ngc-mindful-ivory: #f9eadc;
+
+  /* Semantic aliases consumed by application and shared UI styles. */
+  --ngc-color-ink: var(--ngc-green-950);
+  --ngc-color-ink-muted: #52635a;
+  --ngc-color-surface: var(--ngc-ivory-50);
   --ngc-color-surface-raised: #ffffff;
-  --ngc-color-brand: #0b665f;
-  --ngc-color-brand-strong: #074c48;
-  --ngc-color-accent: #df6c43;
-  --ngc-color-soft: #d9eeea;
-  --ngc-color-border: #a8c3c1;
-  --ngc-color-focus: #b94317;
+  --ngc-color-brand: var(--ngc-green-700);
+  --ngc-color-brand-strong: var(--ngc-green-800);
+  --ngc-color-accent: var(--ngc-gold-700);
+  --ngc-color-soft: var(--ngc-green-100);
+  --ngc-color-border: var(--ngc-warm-200);
+  --ngc-color-border-strong: #b8aa96;
+  --ngc-color-focus: var(--ngc-gold-800);
   --ngc-color-error: #9d271b;
 
   --ngc-font-sans:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    Avenir Next, Avenir, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   --ngc-font-serif: Iowan Old Style, Palatino Linotype, Book Antiqua, Palatino, Georgia, serif;
+  --ngc-font-display: var(--ngc-font-serif);
 
   --ngc-space-1: 0.25rem;
   --ngc-space-2: 0.5rem;
@@ -26,10 +51,10 @@
   --ngc-space-7: 3rem;
   --ngc-space-8: 4.5rem;
 
-  --ngc-radius-small: 0.5rem;
-  --ngc-radius-medium: 1rem;
+  --ngc-radius-small: 0.625rem;
+  --ngc-radius-medium: 1.25rem;
   --ngc-radius-pill: 999px;
-  --ngc-shadow-soft: 0 1.25rem 4rem rgb(20 43 48 / 10%);
+  --ngc-shadow-soft: 0 1.25rem 4rem rgb(32 57 43 / 12%);
   --ngc-content-wide: 74rem;
   --ngc-content-reading: 42rem;
 }

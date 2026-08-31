@@ -2,7 +2,7 @@
 
 ```text
 Vous intervenez dans le dépôt séparé Nurse Appointment Scheduling API. Votre
-objectif est de rendre son contrat public sûr et consommable par NEXT GEN CARE
+objectif est de rendre son contrat public sûr et consommable par NEXT GEN CARES
 Phase 3, sans modifier le dépôt du portail et sans déployer.
 
 Avant toute écriture, lisez intégralement CLAUDE.md et les documents
@@ -13,7 +13,7 @@ aucun secret ou donnée réelle.
 Contexte établi par audit, à vérifier dans le code :
 
 1. POST /api/v1/appointments/confirm crée actuellement directement un
-   rendez-vous CONFIRMED. NEXT GEN CARE doit accuser réception d’une demande
+   rendez-vous CONFIRMED. NEXT GEN CARES doit accuser réception d’une demande
    puis ne confirmer qu’après validation humaine.
 2. booking_holds applique une contrainte d’exclusion à toute ligne ACTIVE,
    tandis que la disponibilité ignore les ACTIVE expirés. Aucun chemin
@@ -84,5 +84,5 @@ Avant de terminer, fournissez :
 
 Ne déployez rien et attendez l’approbation explicite du propriétaire du dépôt
 et de l’Human Engineering Authority avant de déclarer le contrat consommable
-par NEXT GEN CARE.
+par NEXT GEN CARES.
 ```

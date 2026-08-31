@@ -1,10 +1,12 @@
 import { isLocale, localePath, locales, translate, type Locale } from "@next-gen-care/localization";
 import { MainNav, SkipLink } from "@next-gen-care/ui";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { LocaleSwitcher } from "../../components/locale-switcher";
+import { CookieConsentBanner } from "../../components/cookie-consent-banner";
 import { isPublicIndexingEnabled, publicSiteUrl } from "../../config/public-site";
 
 import "@next-gen-care/ui/tokens.css";
@@ -75,7 +77,18 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <SkipLink>{translate(locale, "foundation.skip_to_content")}</SkipLink>
         <header className="site-header">
           <div className="site-header__inner">
-            <span className="wordmark">{translate(locale, "foundation.brand")}</span>
+            <a className="brand-lockup" href={localePath(locale)}>
+              <Image
+                alt={translate(locale, "foundation.brand")}
+                className="brand-lockup__mark"
+                height={512}
+                priority
+                src="/brand/logo-mfr.webp"
+                unoptimized
+                width={512}
+              />
+              <span className="brand-lockup__name">{translate(locale, "foundation.brand")}</span>
+            </a>
             <LocaleSwitcher currentLocale={locale} />
           </div>
         </header>
@@ -89,7 +102,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           />
         </div>
         {children}
+        <CookieConsentBanner locale={locale} />
         <footer className="site-footer">
+          <div>
+            <span className="site-footer__brand">{translate(locale, "foundation.brand")}</span>
+            <p>{translate(locale, "foundation.notice")}</p>
+          </div>
           <a href={localePath(locale, "/legal")}>{translate(locale, "foundation.legal_link")}</a>
         </footer>
       </body>

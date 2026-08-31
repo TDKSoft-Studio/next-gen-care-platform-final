@@ -1,8 +1,8 @@
-# CODEX TRIGGER — NEXT GEN CARE — PHASE 0
+# CODEX TRIGGER — NEXT GEN CARES — PHASE 0
 
 ## Mission
 
-Begin **Phase 0 — Read-only discovery and architecture** for the NEXT GEN CARE public platform.
+Begin **Phase 0 — Read-only discovery and architecture** for the NEXT GEN CARES public platform.
 
 This prompt is subordinate to the authoritative:
 
@@ -307,8 +307,8 @@ Produce:
 
 Required unresolved inputs from the contract include:
 
-- approved primary domain;
-- public contact details;
+- approved primary domain: `nextgen-cares.org`;
+- approved public contact email: `hello@nextgen-cares.org`;
 - exact home-care service area;
 - approved launch services/prices;
 - approved INAMI information;
