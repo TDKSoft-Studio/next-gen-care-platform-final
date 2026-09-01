@@ -152,6 +152,11 @@ If a required action is ambiguous, destructive, provider-specific, legal/clinica
 - recommend one;
 - request human direction.
 
+## Knowledge base
+
+For the stable repository entry points, contracts, operations, and deployment handoff rules, use
+[`docs/knowledge-base/README.md`](docs/knowledge-base/README.md) as the agent-facing index.
+
 ## Completion rule
 
 A green command is evidence only for that command and environment.
