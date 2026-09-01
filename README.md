@@ -46,3 +46,8 @@ Container gates require Docker and Trivy. Infrastructure Helm gates belong to th
 - `packages/config`: shared compiler configuration.
 
 Do not add provider SDKs, real patient data, generic telemetry payloads, production infrastructure, or deployment configuration without an accepted phase/ADR decision. The current appointment UI is limited to the approved `PAY_ON_SITE` human-review request flow and must not present a request as a confirmed appointment.
+
+## Knowledge base for agents
+
+The repository-specific knowledge base is in [`docs/knowledge-base/README.md`](docs/knowledge-base/README.md).
+Use it to find the stable entry points for prompts, contracts, operations, reports, and deployment handoff rules without guessing values from context.
