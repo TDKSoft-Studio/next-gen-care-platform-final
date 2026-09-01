@@ -34,17 +34,17 @@ minimum set of stable references that let an agent:
 
 ## Repository map
 
-| Area | What it contains | Why it matters |
-| --- | --- | --- |
-| `docs/architecture/` | system context, container model, bounded contexts, data flows, threat model | architectural source of truth |
-| `docs/architecture/adr/` | decision records and decision boundaries | explains what was approved and why |
-| `docs/application-deployment-contract.md` | normalized deployment profile schema | contract consumed by the deployment repository |
-| `docs/contracts/` | example application profiles and contract examples | machine-readable contract inputs |
-| `docs/discovery/` | inventory, audits, discovery evidence | historical facts and evidence snapshots |
-| `docs/operations/` | development, quality gates, observability and operational procedures | repeatable operational behavior |
-| `docs/prompts/codex/` | Codex-specific prompt entry points and starter pack | agent-specific bootstrap |
-| `docs/prompts/claude/` | Claude Code-specific prompt entry points and starter pack | agent-specific bootstrap |
-| `docs/reports/` | phase reports and validation evidence | execution trace and human review artifacts |
+| Area                                      | What it contains                                                            | Why it matters                                 |
+| ----------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------- |
+| `docs/architecture/`                      | system context, container model, bounded contexts, data flows, threat model | architectural source of truth                  |
+| `docs/architecture/adr/`                  | decision records and decision boundaries                                    | explains what was approved and why             |
+| `docs/application-deployment-contract.md` | normalized deployment profile schema                                        | contract consumed by the deployment repository |
+| `docs/contracts/`                         | example application profiles and contract examples                          | machine-readable contract inputs               |
+| `docs/discovery/`                         | inventory, audits, discovery evidence                                       | historical facts and evidence snapshots        |
+| `docs/operations/`                        | development, quality gates, observability and operational procedures        | repeatable operational behavior                |
+| `docs/prompts/codex/`                     | Codex-specific prompt entry points and starter pack                         | agent-specific bootstrap                       |
+| `docs/prompts/claude/`                    | Claude Code-specific prompt entry points and starter pack                   | agent-specific bootstrap                       |
+| `docs/reports/`                           | phase reports and validation evidence                                       | execution trace and human review artifacts     |
 
 ## Deployment handoff rule
 
@@ -67,10 +67,10 @@ deployment must stop until the application repository updates its contract.
 
 ## Agent-routing map
 
-| Runtime | Root adapter | Prompt directory |
-| --- | --- | --- |
-| Codex | `AGENTS.md` | `docs/prompts/codex/` |
-| Claude Code | `CLAUDE.md` | `docs/prompts/claude/` |
+| Runtime     | Root adapter | Prompt directory       |
+| ----------- | ------------ | ---------------------- |
+| Codex       | `AGENTS.md`  | `docs/prompts/codex/`  |
+| Claude Code | `CLAUDE.md`  | `docs/prompts/claude/` |
 
 The root adapters stay thin. They point to the authoritative engineering
 contract and to the correct runtime-specific prompt set.
