@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { AppointmentSlotSelector } from "../src/components/appointment-slot-selector";
+import { slotSelectorCopy } from "../src/components/appointment-slot-selector.copy";
 
 describe("appointment slot selector", () => {
   afterEach(() => {
@@ -38,7 +39,7 @@ describe("appointment slot selector", () => {
       if (url === "/api/home-care/appointment-requests" && init?.method === "POST") {
         expect(JSON.parse(String(init.body))).toMatchObject({
           holdId: "8d6c5b4a-3210-4fed-8abc-1234567890ab",
-          patient: {
+          client: {
             firstName: "Ada",
             lastName: "Lovelace",
             email: "ada@example.test"
@@ -58,7 +59,7 @@ describe("appointment slot selector", () => {
     vi.stubGlobal("fetch", fetch);
     vi.stubGlobal("crypto", { randomUUID: () => "idempotency-key" });
 
-    render(<AppointmentSlotSelector locale="fr" />);
+    render(<AppointmentSlotSelector locale="fr" copy={slotSelectorCopy("fr")} />);
 
     await screen.findByText(/province de Liège/);
     fireEvent.change(screen.getByLabelText("Date souhaitée"), {

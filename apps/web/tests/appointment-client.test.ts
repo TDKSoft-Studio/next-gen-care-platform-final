@@ -22,7 +22,7 @@ describe("appointment anti-corruption adapter", () => {
     const result = await submitAppointmentRequest(
       {
         holdId: "8d6c5b4a-3210-4fed-8abc-1234567890ab",
-        patient: { firstName: "Test", lastName: "Patient", email: "test@example.test" }
+        client: { firstName: "Test", lastName: "Patient", email: "test@example.test" }
       },
       "request-key-1"
     );
@@ -53,7 +53,7 @@ describe("appointment anti-corruption adapter", () => {
       submitAppointmentRequest(
         {
           holdId: "8d6c5b4a-3210-4fed-8abc-1234567890ab",
-          patient: { firstName: "Test", lastName: "Patient", email: "test@example.test" }
+          client: { firstName: "Test", lastName: "Patient", email: "test@example.test" }
         },
         "request-key-2"
       )

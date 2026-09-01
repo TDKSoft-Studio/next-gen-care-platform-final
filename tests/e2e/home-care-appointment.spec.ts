@@ -71,12 +71,12 @@ test.describe("Home-care PAY_ON_SITE appointment request journey", () => {
       expect(route.request().headers()["idempotency-key"]).toBeTruthy();
       const payload = route.request().postDataJSON() as {
         holdId?: string;
-        patient?: { firstName?: string; lastName?: string; email?: string };
+        client?: { firstName?: string; lastName?: string; email?: string };
       };
       expect(payload.holdId).toBe(HOLD_ID);
-      expect(payload.patient?.firstName).toBeTruthy();
-      expect(payload.patient?.lastName).toBeTruthy();
-      expect(payload.patient?.email).toBeTruthy();
+      expect(payload.client?.firstName).toBeTruthy();
+      expect(payload.client?.lastName).toBeTruthy();
+      expect(payload.client?.email).toBeTruthy();
       await route.fulfill({
         status: 202,
         contentType: "application/json",

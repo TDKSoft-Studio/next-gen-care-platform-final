@@ -20,3 +20,11 @@ peerDependencyRules:
     "eslint-plugin-import>eslint": "10"
     "eslint-plugin-jsx-a11y>eslint": "10"
     "eslint-plugin-react>eslint": "10"
+
+overrides:
+  # Transitive via the Payload admin Monaco editor only (not in the public bundle).
+  # Pulls the patched release past GHSA-55q2-fjhq-7xh7 / -c2j3-45gr-mqc4 / -vxr8-fq34-vvx9.
+  dompurify: ">=3.4.14"
+  # Build/migration-time transitive via drizzle-kit > @esbuild-kit/*. Clears
+  # GHSA-67mh-4wv8-2f99 (esbuild dev-server request reflection).
+  esbuild: ">=0.25.0"

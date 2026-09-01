@@ -51,4 +51,21 @@ describe("CMS technical spike", () => {
       staticDir: "media"
     });
   });
+
+  it("never lets an unauthenticated request or a non-admin provision or escalate an account", () => {
+    const anonymous = { req: { user: null } } as never;
+    const editor = { req: { user: { roles: ["editor"] } } } as never;
+    const technicalAdmin = { req: { user: { roles: ["technical-admin"] } } } as never;
+
+    expect(Users.access?.create?.(anonymous)).toBe(false);
+    expect(Users.access?.create?.(editor)).toBe(false);
+    expect(Users.access?.create?.(technicalAdmin)).toBe(true);
+
+    const rolesField = Users.fields.find((field) => "name" in field && field.name === "roles") as {
+      access?: { create?: (a: never) => boolean; update?: (a: never) => boolean };
+    };
+    expect(rolesField.access?.update?.(anonymous)).toBe(false);
+    expect(rolesField.access?.update?.(editor)).toBe(false);
+    expect(rolesField.access?.update?.(technicalAdmin)).toBe(true);
+  });
 });

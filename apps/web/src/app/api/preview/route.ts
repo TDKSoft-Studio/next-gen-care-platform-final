@@ -13,6 +13,10 @@ function isAuthorized(received: string | null, expected: string | undefined): bo
   );
 }
 
+// The secret arrives as a query parameter (Payload's standard preview pattern).
+// `Referrer-Policy: no-referrer` blocks referrer leakage and the redirect below
+// drops the secret from the browser-visible URL, but it can still land in server
+// access logs. Tracked as debt in docs/compliance/SECURITY-BASELINE.md.
 export async function GET(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get("secret");
   const locale = request.nextUrl.searchParams.get("locale");

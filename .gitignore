@@ -16,3 +16,6 @@ test-results/
 .DS_Store
 Thumbs.db
 *.log
+
+# Personal document staged in the brand folder by mistake; never commit it.
+/public/brand/contrat_travail_proposition_HKengne.pdf

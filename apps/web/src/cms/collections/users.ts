@@ -10,7 +10,9 @@ export const Users: CollectionConfig = {
   },
   access: {
     admin: ({ req }) => hasCmsRole(req.user, "technical-admin", "medical-approver", "editor"),
-    create: ({ req }) => !req.user || hasCmsRole(req.user, "technical-admin"),
+    // Account provisioning is a technical-admin responsibility. The very first account is
+    // still created through Payload's first-user setup, which runs with overrideAccess.
+    create: ({ req }) => hasCmsRole(req.user, "technical-admin"),
     delete: ({ req }) => hasCmsRole(req.user, "technical-admin"),
     read: ({ req }) => hasCmsRole(req.user, "technical-admin") || { id: { equals: req.user?.id } },
     update: ({ req }) => hasCmsRole(req.user, "technical-admin") || { id: { equals: req.user?.id } }
@@ -22,6 +24,12 @@ export const Users: CollectionConfig = {
       hasMany: true,
       required: true,
       defaultValue: ["editor"],
+      // Field-level guard so a non-admin cannot escalate their own roles through the
+      // self-update path above. First-user setup bypasses this via overrideAccess.
+      access: {
+        create: ({ req }) => hasCmsRole(req.user, "technical-admin"),
+        update: ({ req }) => hasCmsRole(req.user, "technical-admin")
+      },
       options: cmsRoles.map((role) => ({ label: role, value: role }))
     }
   ]

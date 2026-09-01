@@ -14,7 +14,10 @@ export function contentSecurityPolicy(production: boolean): string {
     "img-src 'self' data: blob:",
     "object-src 'none'",
     "script-src 'self' 'unsafe-inline'",
-    "style-src 'self' 'unsafe-inline'"
+    "style-src 'self' 'unsafe-inline'",
+    // The Payload admin code-editor field (Monaco) runs its language services in
+    // blob: web workers; without this they fall back to script-src and are blocked.
+    "worker-src 'self' blob:"
   ];
 
   if (production) directives.push("upgrade-insecure-requests");
