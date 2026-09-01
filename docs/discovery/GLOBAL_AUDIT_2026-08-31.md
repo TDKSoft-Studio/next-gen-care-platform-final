@@ -227,7 +227,19 @@ identiques à ce qu'attend le portail (`AvailabilityResponse { slots:[{start}] }
 | F1 | `public/brand/logo-mfr.39` → `public/brand/logo-mfr.webp`, `docs/prompts/NEXT-GEN-CARES-CODEX-LANDING-PAGE-VISUAL-REDESIGN-PROMPT.md`, `.gitignore` | Renommage du fichier au nom corrompu + mise à jour des références ; exclusion Git du PDF de contrat personnel |
 | API/rename | `apps/web/src/appointment/appointment-client.ts`, `apps/web/src/app/api/home-care/appointment-requests/route.ts`, `apps/web/src/app/api/home-care/availability/route.ts`, `apps/web/src/components/appointment-slot-selector.tsx` | Alignement sur le renommage amont Practitioner/Client : corps `appointment-requests` `patient` → `client` ; params `availability` `patientLat` / `patientLng` → `clientLat` / `clientLng` |
 | API/rename (tests) | `apps/web/tests/appointment-requests-route.test.ts` (nouveau), `apps/web/tests/availability-route.test.ts` (nouveau), `apps/web/tests/appointment-client.test.ts`, `apps/web/tests/appointment-slot-selector.test.tsx` | Tests de route figeant la forme `client` et le transfert `clientLat` / `clientLng` ; rejet explicite de l'ancienne forme `patient` (constat M2 partiellement adressé) |
+| M1 | `apps/web/src/components/domain-page.tsx`, `apps/web/src/app/[locale]/home-care/page.tsx` | `DomainPage` accepte un slot `children` rendu **dans** le `<main>` ; le sélecteur de créneau n'est plus orphelin après `</main>` |
+| M3 | `docs/compliance/SECURITY-BASELINE.md` | Réécrit : surfaces réelles (admin Payload, formulaire RDV, adaptateur API), contrôles actifs à jour, dette rouverte (contrôle d'`Origin` / rate-limit sur `/api/home-care/*`, notice RGPD au point de collecte, secret de preview en query, résolution « première organisation ») |
+| M4 | `packages/localization/src/catalogs/{fr,nl}.v1.json`, `apps/web/src/components/appointment-slot-selector.copy.ts` (nouveau), `apps/web/src/components/appointment-slot-selector.tsx`, `apps/web/src/components/cookie-consent-banner.tsx`, `apps/web/src/app/[locale]/layout.tsx` | Chaînes des deux composants migrées vers les catalogues versionnés (namespaces `home_care_slot.*`, `cookie_consent.*`) ; résolues côté serveur et passées en prop `copy` — les catalogues ne partent pas dans le bundle client (JS public +0,4 Ko) |
+| M5 | `apps/web/src/app/health/ready/route.ts`, `apps/web/package.json`, `apps/web/tests/foundation.integration.test.tsx` | `/health/ready` sonde PostgreSQL via une connexion `pg` courte quand `DATABASE_URL` est défini (503 si injoignable) ; `not-configured` sinon |
+| F2 | `pnpm-workspace.yaml`, `pnpm-lock.yaml` | `pnpm` overrides `dompurify >=3.4.14` et `esbuild >=0.25.0` → `pnpm audit --prod` sans vulnérabilité |
+| F3 | `apps/web/src/security/headers.ts`, `apps/web/tests/security-headers.test.ts` | Ajout de `worker-src 'self' blob:` à la CSP (workers de l'éditeur Monaco de l'admin) |
+| F4 | `apps/web/src/app/api/preview/route.ts`, `docs/compliance/SECURITY-BASELINE.md` | Résidu du secret de preview en query string documenté (couvert par `Referrer-Policy: no-referrer` + redirection qui retire le secret de l'URL visible) |
+| F5 | `apps/web/src/components/appointment-slot-selector.tsx` | Section coordonnées enveloppée dans un `<form>` (soumission clavier), bouton `type="submit"`, `ErrorSummary` de `packages/ui` câblé avec messages par champ et `id` d'ancrage |
+| F6 | `apps/web/src/components/cookie-consent-banner.tsx` | `role="dialog"` → `role="region"` (bannière non modale, pas de piège de focus) |
 
-Les autres constats (M1, M3–M5, F2–F6) sont laissés ouverts : ils relèvent d'un
-arbitrage produit / clinique à mener avec la reprise de la Phase 3, ou d'une
-tranche de dette dédiée.
+Constats restants ouverts : **M2** (partiellement — tests de route ajoutés pour
+`appointment-requests` et `availability` ; `booking-holds` et `catalog` restent
+sans tests unitaires dédiés) et les points de vigilance amont de la section
+« Suivi API » (rôle `NURSE` sur `confirm` / `reject`, contrat OpenAPI non épinglé,
+résolution « première organisation »), qui relèvent du dépôt API et de la reprise
+de la Phase 3.
