@@ -38,6 +38,7 @@ minimum set of stable references that let an agent:
 | ----------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------- |
 | `docs/architecture/`                      | system context, container model, bounded contexts, data flows, threat model | architectural source of truth                  |
 | `docs/architecture/adr/`                  | decision records and decision boundaries                                    | explains what was approved and why             |
+| `docs/knowledge-base/environment-matrix.md` | local/staging/production deployment matrix                                 | explicit environment differences and stable inputs |
 | `docs/application-deployment-contract.md` | normalized deployment profile schema                                        | contract consumed by the deployment repository |
 | `docs/contracts/`                         | example application profiles and contract examples                          | machine-readable contract inputs               |
 | `docs/discovery/`                         | inventory, audits, discovery evidence                                       | historical facts and evidence snapshots        |
