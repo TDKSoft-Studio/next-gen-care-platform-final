@@ -29,11 +29,12 @@ describe("web foundation integration", () => {
 
   it("exposes non-sensitive liveness and readiness responses", async () => {
     const liveResponse = live();
-    const readyResponse = ready();
+    const readyResponse = await ready();
     expect(liveResponse.status).toBe(200);
     expect(await liveResponse.json()).toEqual({ status: "ok" });
+    expect(readyResponse.status).toBe(200);
     expect(await readyResponse.json()).toEqual({
-      checks: { application: "ready" },
+      checks: { application: "ready", database: "not-configured" },
       status: "ok"
     });
   });
