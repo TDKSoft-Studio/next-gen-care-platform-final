@@ -4,28 +4,24 @@ import { useSyncExternalStore } from "react";
 
 type Locale = "fr" | "nl";
 
+export interface CookieConsentCopy {
+  title: string;
+  body: string;
+  accept: string;
+  refuse: string;
+  privacy: string;
+}
+
 const STORAGE_KEY = "next-gen-care-cookie-consent";
 const CONSENT_CHANGE_EVENT = "next-gen-care-cookie-consent-change";
 const UNAVAILABLE_ON_SERVER = "unavailable";
 
-const copy = {
-  fr: {
-    title: "Votre vie privée compte",
-    body: "Nous utilisons uniquement les cookies nécessaires au fonctionnement du site. Aucun cookie non essentiel n’est activé sans votre accord.",
-    accept: "J’accepte",
-    refuse: "Refuser",
-    privacy: "En savoir plus"
-  },
-  nl: {
-    title: "Uw privacy telt",
-    body: "We gebruiken alleen cookies die nodig zijn voor de werking van de website. Niet-essentiële cookies worden niet geactiveerd zonder uw toestemming.",
-    accept: "Ik accepteer",
-    refuse: "Weigeren",
-    privacy: "Meer informatie"
-  }
-} as const;
+interface CookieConsentBannerProps {
+  locale: Locale;
+  copy: CookieConsentCopy;
+}
 
-export function CookieConsentBanner({ locale }: { locale: Locale }) {
+export function CookieConsentBanner({ locale, copy }: CookieConsentBannerProps) {
   const consent = useSyncExternalStore(
     (notify) => {
       window.addEventListener(CONSENT_CHANGE_EVENT, notify);
@@ -35,7 +31,6 @@ export function CookieConsentBanner({ locale }: { locale: Locale }) {
     () => UNAVAILABLE_ON_SERVER
   );
   const visible = consent === null;
-  const text = copy[locale];
 
   function choose(value: "accepted" | "refused") {
     window.localStorage.setItem(STORAGE_KEY, value);
@@ -47,21 +42,21 @@ export function CookieConsentBanner({ locale }: { locale: Locale }) {
   return (
     <section
       className="cookie-consent"
-      role="dialog"
+      role="region"
       aria-labelledby="cookie-consent-title"
       aria-describedby="cookie-consent-description"
     >
       <div>
-        <h2 id="cookie-consent-title">{text.title}</h2>
-        <p id="cookie-consent-description">{text.body}</p>
+        <h2 id="cookie-consent-title">{copy.title}</h2>
+        <p id="cookie-consent-description">{copy.body}</p>
       </div>
       <div className="cookie-consent__actions">
-        <a href={`/${locale}/legal#cookies`}>{text.privacy}</a>
+        <a href={`/${locale}/legal#cookies`}>{copy.privacy}</a>
         <button type="button" onClick={() => choose("refused")}>
-          {text.refuse}
+          {copy.refuse}
         </button>
         <button type="button" className="cookie-consent__accept" onClick={() => choose("accepted")}>
-          {text.accept}
+          {copy.accept}
         </button>
       </div>
     </section>

@@ -1,16 +1,21 @@
+import type { ReactNode } from "react";
+
 interface DomainPageProps {
   eyebrow: string;
   heading: string;
   introduction: string;
   notice: string;
+  children?: ReactNode;
 }
 
 /**
  * Shared shell for a domain presentation. It intentionally contains no
  * forms, prices, contact details, care availability, or clinical claims;
  * those facts remain CMS-governed and require their own human review.
+ * Domain-specific interactive content (e.g. the home-care request flow) is
+ * passed as `children` so it renders inside the page's `main` landmark.
  */
-export function DomainPage({ eyebrow, heading, introduction, notice }: DomainPageProps) {
+export function DomainPage({ eyebrow, heading, introduction, notice, children }: DomainPageProps) {
   return (
     <main id="main-content" tabIndex={-1}>
       <p className="eyebrow">{eyebrow}</p>
@@ -19,6 +24,7 @@ export function DomainPage({ eyebrow, heading, introduction, notice }: DomainPag
       <aside className="foundation-notice" role="note">
         {notice}
       </aside>
+      {children}
     </main>
   );
 }

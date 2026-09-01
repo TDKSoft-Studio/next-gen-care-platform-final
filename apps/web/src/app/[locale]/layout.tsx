@@ -114,7 +114,16 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           </div>
         </header>
         {children}
-        <CookieConsentBanner locale={locale} />
+        <CookieConsentBanner
+          locale={locale}
+          copy={{
+            title: translate(locale, "cookie_consent.title"),
+            body: translate(locale, "cookie_consent.body"),
+            accept: translate(locale, "cookie_consent.accept"),
+            refuse: translate(locale, "cookie_consent.refuse"),
+            privacy: translate(locale, "cookie_consent.privacy")
+          }}
+        />
         <footer className="site-footer">
           <div>
             <span className="site-footer__brand">{translate(locale, "foundation.brand")}</span>

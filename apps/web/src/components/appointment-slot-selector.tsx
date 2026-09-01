@@ -1,82 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+
+import { ErrorSummary, type ErrorSummaryItem } from "@next-gen-care/ui";
+
+import type { SlotSelectorCopy } from "./appointment-slot-selector.copy";
 
 interface AppointmentSlotSelectorProps {
   locale: "fr" | "nl";
+  copy: SlotSelectorCopy;
 }
-
-const copy = {
-  fr: {
-    title: "Choisir un créneau",
-    date: "Date souhaitée",
-    mode: "Type de soins",
-    home: "À domicile",
-    clinic: "Sur site",
-    search: "Rechercher les créneaux",
-    choose: "Sélectionner",
-    loading: "Recherche en cours…",
-    empty: "Aucun créneau disponible pour cette recherche.",
-    unavailable: "La disponibilité est temporairement indisponible.",
-    hold: "Réserver ce créneau pour examen",
-    holding: "Réservation temporaire…",
-    held: "Créneau réservé temporairement jusqu’au {date}.",
-    patientTitle: "Vos coordonnées",
-    firstName: "Prénom",
-    lastName: "Nom",
-    email: "E-mail",
-    phone: "Téléphone",
-    addressLine: "Adresse",
-    city: "Ville",
-    postalCode: "Code postal",
-    country: "Pays",
-    submit: "Envoyer la demande pour revue",
-    submitting: "Envoi de la demande…",
-    submitted: "Demande reçue pour revue. Référence : {requestId}.",
-    review:
-      "Votre demande sera examinée par l’équipe. Ce n’est pas une confirmation de rendez-vous.",
-    invalid: "Veuillez compléter les champs obligatoires.",
-    config:
-      "La sélection de créneau sera disponible après configuration du service et du lieu approuvés.",
-    area: "Zone : province de Liège",
-    latitude: "Latitude (soins à domicile)",
-    longitude: "Longitude (soins à domicile)"
-  },
-  nl: {
-    title: "Een tijdslot kiezen",
-    date: "Gewenste datum",
-    mode: "Type zorg",
-    home: "Thuis",
-    clinic: "Op locatie",
-    search: "Beschikbare tijdsloten zoeken",
-    choose: "Selecteren",
-    loading: "Zoeken…",
-    empty: "Geen tijdslot beschikbaar voor deze zoekopdracht.",
-    unavailable: "Beschikbaarheid is tijdelijk niet beschikbaar.",
-    hold: "Dit tijdslot tijdelijk reserveren",
-    holding: "Tijdelijke reservatie…",
-    held: "Tijdslot tijdelijk gereserveerd tot {date}.",
-    patientTitle: "Uw gegevens",
-    firstName: "Voornaam",
-    lastName: "Naam",
-    email: "E-mail",
-    phone: "Telefoon",
-    addressLine: "Adres",
-    city: "Stad",
-    postalCode: "Postcode",
-    country: "Land",
-    submit: "Aanvraag ter beoordeling versturen",
-    submitting: "Aanvraag versturen…",
-    submitted: "Aanvraag ontvangen voor beoordeling. Referentie: {requestId}.",
-    review: "Uw aanvraag wordt door het team beoordeeld. Dit is geen bevestiging van een afspraak.",
-    invalid: "Vul de verplichte velden in.",
-    config:
-      "De tijdslotkeuze is beschikbaar zodra de goedgekeurde dienst en locatie zijn ingesteld.",
-    area: "Werkingsgebied: provincie Luik",
-    latitude: "Breedtegraad (thuiszorg)",
-    longitude: "Lengtegraad (thuiszorg)"
-  }
-} as const;
 
 interface Slot {
   start: string;
@@ -112,8 +45,10 @@ const emptyPatientForm: PatientForm = {
   country: "BE"
 };
 
-export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps) {
-  const t = copy[locale];
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function AppointmentSlotSelector({ locale, copy }: AppointmentSlotSelectorProps) {
+  const t = copy;
   const [date, setDate] = useState("");
   const [mode, setMode] = useState<"HOME" | "CLINIC">("HOME");
   const [latitude, setLatitude] = useState("");
@@ -122,6 +57,7 @@ export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps
   const [selected, setSelected] = useState<string | null>(null);
   const [hold, setHold] = useState<Hold | null>(null);
   const [patient, setPatient] = useState<PatientForm>(emptyPatientForm);
+  const [errors, setErrors] = useState<ErrorSummaryItem[]>([]);
   const [accepted, setAccepted] = useState<AppointmentRequestAccepted | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -210,12 +146,30 @@ export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps
     setPatient((current) => ({ ...current, [field]: value }));
   }
 
-  async function submitRequest() {
-    if (!hold) return;
-    if (!patient.firstName.trim() || !patient.lastName.trim() || !patient.email.trim()) {
+  function validatePatient(): ErrorSummaryItem[] {
+    const found: ErrorSummaryItem[] = [];
+    if (!patient.firstName.trim())
+      found.push({ fieldId: "slot-first-name", message: t.errorFirstName });
+    if (!patient.lastName.trim())
+      found.push({ fieldId: "slot-last-name", message: t.errorLastName });
+    if (!emailPattern.test(patient.email.trim()))
+      found.push({ fieldId: "slot-email", message: t.errorEmail });
+    return found;
+  }
+
+  function handlePatientSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const found = validatePatient();
+    setErrors(found);
+    if (found.length > 0) {
       setMessage(t.invalid);
       return;
     }
+    void submitRequest();
+  }
+
+  async function submitRequest() {
+    if (!hold) return;
     setBusy(true);
     setMessage("");
     try {
@@ -244,6 +198,7 @@ export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps
         return;
       }
       setAccepted(data);
+      setErrors([]);
     } catch {
       setMessage(t.unavailable);
     } finally {
@@ -344,84 +299,90 @@ export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps
         </div>
       )}
       {hold && !accepted && (
-        <fieldset>
-          <legend>{t.patientTitle}</legend>
-          <div className="slot-selector__fields slot-selector__fields--patient">
-            <label>
-              {t.firstName}
-              <input
-                autoComplete="given-name"
-                value={patient.firstName}
-                onChange={(event) => updatePatient("firstName", event.target.value)}
-                required
-              />
-            </label>
-            <label>
-              {t.lastName}
-              <input
-                autoComplete="family-name"
-                value={patient.lastName}
-                onChange={(event) => updatePatient("lastName", event.target.value)}
-                required
-              />
-            </label>
-            <label>
-              {t.email}
-              <input
-                autoComplete="email"
-                inputMode="email"
-                type="email"
-                value={patient.email}
-                onChange={(event) => updatePatient("email", event.target.value)}
-                required
-              />
-            </label>
-            <label>
-              {t.phone}
-              <input
-                autoComplete="tel"
-                inputMode="tel"
-                value={patient.phone}
-                onChange={(event) => updatePatient("phone", event.target.value)}
-              />
-            </label>
-            <label>
-              {t.addressLine}
-              <input
-                autoComplete="address-line1"
-                value={patient.addressLine}
-                onChange={(event) => updatePatient("addressLine", event.target.value)}
-              />
-            </label>
-            <label>
-              {t.city}
-              <input
-                autoComplete="address-level2"
-                value={patient.city}
-                onChange={(event) => updatePatient("city", event.target.value)}
-              />
-            </label>
-            <label>
-              {t.postalCode}
-              <input
-                autoComplete="postal-code"
-                value={patient.postalCode}
-                onChange={(event) => updatePatient("postalCode", event.target.value)}
-              />
-            </label>
-            <label>
-              {t.country}
-              <input
-                autoComplete="country"
-                value={patient.country}
-                onChange={(event) => updatePatient("country", event.target.value)}
-              />
-            </label>
-          </div>
-          <button type="button" onClick={submitRequest} disabled={busy}>
-            {busy ? t.submitting : t.submit}
-          </button>
-        </fieldset>
+        <form onSubmit={handlePatientSubmit} noValidate>
+          <ErrorSummary title={t.errorsTitle} errors={errors} />
+          <fieldset>
+            <legend>{t.patientTitle}</legend>
+            <div className="slot-selector__fields slot-selector__fields--patient">
+              <label htmlFor="slot-first-name">
+                {t.firstName}
+                <input
+                  id="slot-first-name"
+                  autoComplete="given-name"
+                  value={patient.firstName}
+                  onChange={(event) => updatePatient("firstName", event.target.value)}
+                  required
+                />
+              </label>
+              <label htmlFor="slot-last-name">
+                {t.lastName}
+                <input
+                  id="slot-last-name"
+                  autoComplete="family-name"
+                  value={patient.lastName}
+                  onChange={(event) => updatePatient("lastName", event.target.value)}
+                  required
+                />
+              </label>
+              <label htmlFor="slot-email">
+                {t.email}
+                <input
+                  id="slot-email"
+                  autoComplete="email"
+                  inputMode="email"
+                  type="email"
+                  value={patient.email}
+                  onChange={(event) => updatePatient("email", event.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                {t.phone}
+                <input
+                  autoComplete="tel"
+                  inputMode="tel"
+                  value={patient.phone}
+                  onChange={(event) => updatePatient("phone", event.target.value)}
+                />
+              </label>
+              <label>
+                {t.addressLine}
+                <input
+                  autoComplete="address-line1"
+                  value={patient.addressLine}
+                  onChange={(event) => updatePatient("addressLine", event.target.value)}
+                />
+              </label>
+              <label>
+                {t.city}
+                <input
+                  autoComplete="address-level2"
+                  value={patient.city}
+                  onChange={(event) => updatePatient("city", event.target.value)}
+                />
+              </label>
+              <label>
+                {t.postalCode}
+                <input
+                  autoComplete="postal-code"
+                  value={patient.postalCode}
+                  onChange={(event) => updatePatient("postalCode", event.target.value)}
+                />
+              </label>
+              <label>
+                {t.country}
+                <input
+                  autoComplete="country"
+                  value={patient.country}
+                  onChange={(event) => updatePatient("country", event.target.value)}
+                />
+              </label>
+            </div>
+            <button type="submit" disabled={busy}>
+              {busy ? t.submitting : t.submit}
+            </button>
+          </fieldset>
+        </form>
       )}
       {accepted && (
         <div className="slot-selector__success" role="status">
