@@ -166,8 +166,8 @@ export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps
     setSelected(null);
     const query = new URLSearchParams({ serviceId, locationId, date, mode });
     if (mode === "HOME" && latitude && longitude) {
-      query.set("patientLat", latitude);
-      query.set("patientLng", longitude);
+      query.set("clientLat", latitude);
+      query.set("clientLng", longitude);
     }
     try {
       const response = await fetch(`/api/home-care/availability?${query}`, { cache: "no-store" });
@@ -224,7 +224,7 @@ export function AppointmentSlotSelector({ locale }: AppointmentSlotSelectorProps
         headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
         body: JSON.stringify({
           holdId: hold.holdId,
-          patient: {
+          client: {
             firstName: patient.firstName.trim(),
             lastName: patient.lastName.trim(),
             email: patient.email.trim(),

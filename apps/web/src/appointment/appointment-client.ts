@@ -1,6 +1,7 @@
 export interface AppointmentRequestPayload {
   holdId: string;
-  patient: {
+  // Upstream renamed Patient -> Client (API repo Phase 12/13). The wire key is `client`.
+  client: {
     firstName: string;
     lastName: string;
     email: string;

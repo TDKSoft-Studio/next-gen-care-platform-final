@@ -37,7 +37,9 @@ export async function GET(request: NextRequest) {
   upstream.searchParams.set("locationId", locationId);
   upstream.searchParams.set("date", date);
   upstream.searchParams.set("mode", mode);
-  for (const name of ["patientLat", "patientLng"]) {
+  // Upstream renamed Patient -> Client (API repo Phase 12/13); the availability query
+  // parameters are now clientLat / clientLng.
+  for (const name of ["clientLat", "clientLng"]) {
     const value = query.get(name);
     if (value) upstream.searchParams.set(name, value);
   }

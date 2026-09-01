@@ -38,7 +38,7 @@ describe("appointment slot selector", () => {
       if (url === "/api/home-care/appointment-requests" && init?.method === "POST") {
         expect(JSON.parse(String(init.body))).toMatchObject({
           holdId: "8d6c5b4a-3210-4fed-8abc-1234567890ab",
-          patient: {
+          client: {
             firstName: "Ada",
             lastName: "Lovelace",
             email: "ada@example.test"

@@ -17,9 +17,9 @@ function isUuid(value: unknown): value is string {
 function isPayload(value: unknown): value is AppointmentRequestPayload {
   if (!value || typeof value !== "object") return false;
   const body = value as Record<string, unknown>;
-  const patient = body.patient;
-  if (!patient || typeof patient !== "object") return false;
-  const person = patient as Record<string, unknown>;
+  const client = body.client;
+  if (!client || typeof client !== "object") return false;
+  const person = client as Record<string, unknown>;
   return (
     isUuid(body.holdId) &&
     typeof person.firstName === "string" &&
