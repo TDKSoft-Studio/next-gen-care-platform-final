@@ -59,13 +59,13 @@ The intended positioning is:
 
 # 2. BRAND SOURCE OF TRUTH
 
-Use `public/brand/logo-mfr.39` as the supplied NEXT GEN CARES global-logo reference.
+Use `public/brand/logo-mfr.webp` as the supplied NEXT GEN CARES global-logo reference.
 
 Use the following assets only for their explicitly assigned role:
 
 | Asset                                                    | Assigned role                                                                                                    |
 | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `public/brand/logo-mfr.39`                               | Global NEXT GEN CARES visual identity and logo reference.                                                        |
+| `public/brand/logo-mfr.webp`                             | Global NEXT GEN CARES visual identity and logo reference.                                                        |
 | `public/brand/logo-mindfultrip-historic-transparent.png` | Travel and well-being service sub-brand logo.                                                                    |
 | `public/brand/mindfultrip-brand-board-v1.0.png`          | Visual reference board for the Mindful Trip sub-brand.                                                           |
 | `public/brand/nextgen-care.jpeg`                         | Landing-page composition and visual-direction reference only. It is not a logo or a literal layout to reproduce. |
@@ -920,7 +920,7 @@ If you discover unrelated problems, report them separately.
 
 The redesign is complete only when:
 
-- `public/brand/logo-mfr.39` is properly integrated as the global logo;
+- `public/brand/logo-mfr.webp` is properly integrated as the global logo;
 - the new palette is centralized;
 - raw brand colors are not scattered through the UI;
 - the Hero has been intentionally redesigned;
