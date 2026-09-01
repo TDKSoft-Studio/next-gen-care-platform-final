@@ -10,6 +10,7 @@ describe("security header baseline", () => {
     expect(headers["Content-Security-Policy"]).toContain("frame-ancestors 'none'");
     expect(headers["Content-Security-Policy"]).toContain("object-src 'none'");
     expect(headers["Content-Security-Policy"]).toContain("form-action 'self'");
+    expect(headers["Content-Security-Policy"]).toContain("worker-src 'self' blob:");
     expect(headers["Referrer-Policy"]).toBe("no-referrer");
     expect(headers["X-Content-Type-Options"]).toBe("nosniff");
   });
