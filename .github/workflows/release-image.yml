@@ -1,0 +1,162 @@
+name: Release image (production)
+
+# Builds and publishes the production runtime image to GHCR BY IMMUTABLE DIGEST
+# with SLSA build provenance, an SBOM and a Trivy gate. This workflow does NOT
+# deploy: it hands the digest + source revision to the infrastructure repository
+# (next-gen-care-infra), where a human-gated workflow reconciles it via Argo CD.
+#
+# Contract references (next-gen-care-platform/docs/application-deployment-contract.md):
+#   §3  container image / digest strategy (never `latest`, record sourceRevision)
+#   §22 supply-chain (SBOM CycloneDX 1.6, Trivy HIGH/CRITICAL fixed)
+#   §24 #1 / HD-02 — published image + verifiable digest + provenance
+#
+# NOTE (supply-chain hardening): third-party actions below that are not yet
+# pinned to a commit SHA are marked `# TODO: pin to commit SHA`. Pin them before
+# this workflow is allowed to run against a protected tag.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref (tag or commit SHA) to build and publish"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-image-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/tdksoft-studio/next-gen-care-platform-web
+  CI: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  ci-gate:
+    name: Provider-independent + supply-chain gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - name: Enable pinned package manager
+        run: |
+          npm install --global corepack@0.36.0
+          corepack enable
+          corepack install
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Primary local-parity gate
+        run: pnpm exec task ci
+      - name: Dependency audit
+        run: pnpm exec task security:dependencies
+      - name: Generate CycloneDX 1.6 SBOM
+        run: pnpm exec task security:sbom
+      - name: Upload SBOM (release evidence packet — DEP-003)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sbom-cyclonedx
+          path: .artifacts/sbom.cdx.json
+          if-no-files-found: error
+
+  build-publish:
+    name: Build, publish by digest, attest, scan
+    needs: ci-gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write # ONLY this job may write packages
+      id-token: write # keyless signing + provenance
+      attestations: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image-ref: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
+      source-revision: ${{ steps.rev.outputs.sha }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+      - name: Resolve source revision
+        id: rev
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Compute image tags (never `latest`)
+        id: tags
+        run: |
+          sha='${{ steps.rev.outputs.sha }}'
+          {
+            echo "tags<<EOF"
+            echo "${IMAGE}:sha-${sha}"
+            if [ "${{ github.ref_type }}" = "tag" ]; then
+              echo "${IMAGE}:${{ github.ref_name }}"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3 # TODO: pin to commit SHA
+      - name: Log in to GHCR
+        uses: docker/login-action@v3 # TODO: pin to commit SHA
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6 # TODO: pin to commit SHA
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Attest build provenance (SLSA) — HD-02 / §24 #1
+        uses: actions/attest-build-provenance@v2 # TODO: pin to commit SHA
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3 # TODO: pin to commit SHA
+      - name: Sign image (keyless / OIDC)
+        run: cosign sign --yes "${IMAGE}@${{ steps.build.outputs.digest }}"
+      - name: Trivy scan of the PUSHED image (by digest)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+      - name: Publish handoff summary
+        run: |
+          {
+            echo "## Image publiée (déploiement par digest)"
+            echo ""
+            echo "| Champ | Valeur |"
+            echo "| --- | --- |"
+            echo "| Référence | \`${IMAGE}@${{ steps.build.outputs.digest }}\` |"
+            echo "| Digest | \`${{ steps.build.outputs.digest }}\` |"
+            echo "| Source revision | \`${{ steps.rev.outputs.sha }}\` |"
+            echo "| Tag | \`${{ github.ref_name }}\` |"
+            echo ""
+            echo "### Étapes suivantes — dépôt next-gen-care-infra (gate humain)"
+            echo ""
+            echo "1. Lancer \`bump-digest.yml\` avec ce digest + cette source revision → PR."
+            echo "2. Revue humaine + merge de la PR (le profil passe/reste \`accepted\` par édition humaine gated HD-02/03/05/07 ; manifest re-rendu)."
+            echo "3. Lancer \`deploy-production.yml\` (workflow_dispatch + chaîne de confirmation + reviewers d'Environment \`production\` — DEP-020)."
+          } >> "$GITHUB_STEP_SUMMARY"
