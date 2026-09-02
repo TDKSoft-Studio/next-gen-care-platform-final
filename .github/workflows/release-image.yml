@@ -32,7 +32,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  IMAGE: ghcr.io/tdksoft-studio/next-gen-care-platform-web
+  # Package name under the repo namespace so the workflow's GITHUB_TOKEN
+  # (packages: write) auto-creates and can push to it. A package outside the
+  # repo namespace (…/next-gen-care-platform-web) is not writable by this repo's
+  # Actions unless an org owner links it in the package UI. See infra ADR-013.
+  IMAGE: ghcr.io/tdksoft-studio/next-gen-care-platform-final/web
   CI: "true"
   NEXT_TELEMETRY_DISABLED: "1"
 
