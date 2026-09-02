@@ -10,9 +10,9 @@ name: Release image (production)
 #   §22 supply-chain (SBOM CycloneDX 1.6, Trivy HIGH/CRITICAL fixed)
 #   §24 #1 / HD-02 — published image + verifiable digest + provenance
 #
-# NOTE (supply-chain hardening): third-party actions below that are not yet
-# pinned to a commit SHA are marked `# TODO: pin to commit SHA`. Pin them before
-# this workflow is allowed to run against a protected tag.
+# NOTE (supply-chain hardening): every third-party action is pinned to a commit
+# SHA with the resolved version in a trailing comment. Re-resolve and bump these
+# deliberately (e.g. with a scheduled digest-pin check), never float a tag.
 
 on:
   push:
@@ -105,16 +105,16 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3 # TODO: pin to commit SHA
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
       - name: Log in to GHCR
-        uses: docker/login-action@v3 # TODO: pin to commit SHA
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v6 # TODO: pin to commit SHA
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           file: ./Dockerfile
@@ -126,13 +126,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Attest build provenance (SLSA) — HD-02 / §24 #1
-        uses: actions/attest-build-provenance@v2 # TODO: pin to commit SHA
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-name: ${{ env.IMAGE }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
       - name: Install cosign
-        uses: sigstore/cosign-installer@v3 # TODO: pin to commit SHA
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3.9.1
       - name: Sign image (keyless / OIDC)
         run: cosign sign --yes "${IMAGE}@${{ steps.build.outputs.digest }}"
       - name: Trivy scan of the PUSHED image (by digest)
