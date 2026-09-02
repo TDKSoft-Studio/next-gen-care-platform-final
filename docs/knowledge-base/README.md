@@ -34,17 +34,18 @@ minimum set of stable references that let an agent:
 
 ## Repository map
 
-| Area                                      | What it contains                                                            | Why it matters                                 |
-| ----------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------- |
-| `docs/architecture/`                      | system context, container model, bounded contexts, data flows, threat model | architectural source of truth                  |
-| `docs/architecture/adr/`                  | decision records and decision boundaries                                    | explains what was approved and why             |
-| `docs/application-deployment-contract.md` | normalized deployment profile schema                                        | contract consumed by the deployment repository |
-| `docs/contracts/`                         | example application profiles and contract examples                          | machine-readable contract inputs               |
-| `docs/discovery/`                         | inventory, audits, discovery evidence                                       | historical facts and evidence snapshots        |
-| `docs/operations/`                        | development, quality gates, observability and operational procedures        | repeatable operational behavior                |
-| `docs/prompts/codex/`                     | Codex-specific prompt entry points and starter pack                         | agent-specific bootstrap                       |
-| `docs/prompts/claude/`                    | Claude Code-specific prompt entry points and starter pack                   | agent-specific bootstrap                       |
-| `docs/reports/`                           | phase reports and validation evidence                                       | execution trace and human review artifacts     |
+| Area                                       | What it contains                                                            | Why it matters                                               |
+| ------------------------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `docs/architecture/`                       | system context, container model, bounded contexts, data flows, threat model | architectural source of truth                                |
+| `docs/architecture/adr/`                   | decision records and decision boundaries                                    | explains what was approved and why                           |
+| `docs/application-deployment-contract.md`  | pointer to the authoritative `DEPLOYMENT_CONTRACT.md`                       | contract consumed by the deployment repository               |
+| `docs/contracts/`                          | example application profiles and contract examples                          | machine-readable contract inputs                             |
+| `docs/prompts/claude/DEPLOYMENT_PROMPT.md` | Claude Code adapter for deployment-contract work                            | how a Claude Code agent maintains and hands off the contract |
+| `docs/discovery/`                          | inventory, audits, discovery evidence                                       | historical facts and evidence snapshots                      |
+| `docs/operations/`                         | development, quality gates, observability and operational procedures        | repeatable operational behavior                              |
+| `docs/prompts/codex/`                      | Codex-specific prompt entry points and starter pack                         | agent-specific bootstrap                                     |
+| `docs/prompts/claude/`                     | Claude Code-specific prompt entry points and starter pack                   | agent-specific bootstrap                                     |
+| `docs/reports/`                            | phase reports and validation evidence                                       | execution trace and human review artifacts                   |
 
 ## Deployment handoff rule
 
@@ -56,6 +57,9 @@ Before the infrastructure repository deploys this application, it must read:
 
 If the contract is missing, incomplete, ambiguous, obsolete, or contradictory,
 deployment must stop until the application repository updates its contract.
+
+A Claude Code agent doing that update work follows
+`docs/prompts/claude/DEPLOYMENT_PROMPT.md`.
 
 ## Operational map
 
@@ -75,6 +79,11 @@ deployment must stop until the application repository updates its contract.
 The root adapters stay thin. They point to the authoritative engineering
 contract and to the correct runtime-specific prompt set.
 
+Task-specific adapters live under the prompt directories. For deployment-contract
+work the Claude Code adapter is `docs/prompts/claude/DEPLOYMENT_PROMPT.md`; a
+behaviorally equivalent Codex counterpart under `docs/prompts/codex/` is a
+pending follow-up.
+
 ## Safety rules
 
 - Never create deployment inputs from assumptions.
@@ -86,7 +95,7 @@ contract and to the correct runtime-specific prompt set.
 ## Recommended reading order for a deployment task
 
 1. `NEXT_GEN_CARE_MASTER_ENGINEERING_PROMPT.md`
-2. `AGENTS.md` or `CLAUDE.md`
+2. `AGENTS.md` or `CLAUDE.md` (Claude Code: then `docs/prompts/claude/DEPLOYMENT_PROMPT.md`)
 3. `docs/application-deployment-contract.md`
 4. `docs/contracts/application-profile.example.yaml`
 5. `docs/operations/QUALITY-GATES.md`

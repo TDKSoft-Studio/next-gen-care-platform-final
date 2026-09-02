@@ -126,13 +126,13 @@ evidence trail stays in the transcript.
 Use the canonical tasks from `Taskfile.yml`; do not invent ad hoc commands.
 Relevant to the deployment contract:
 
-| Purpose                                   | Canonical command             |
-| ----------------------------------------- | ----------------------------- |
-| Full local CI parity gate                 | `pnpm exec task ci`           |
-| Extended CI (adds dependency audit)       | `pnpm exec task ci:extended`  |
-| Production build                          | `pnpm exec task build`        |
-| Localized routes, headers, probes         | `pnpm exec task test:http`    |
-| Container image build                     | `pnpm exec task container:build` |
+| Purpose                             | Canonical command                |
+| ----------------------------------- | -------------------------------- |
+| Full local CI parity gate           | `pnpm exec task ci`              |
+| Extended CI (adds dependency audit) | `pnpm exec task ci:extended`     |
+| Production build                    | `pnpm exec task build`           |
+| Localized routes, headers, probes   | `pnpm exec task test:http`       |
+| Container image build               | `pnpm exec task container:build` |
 
 Record the exact command and its outcome in the phase report. A green command
 is evidence only for that command and that environment. Never write "all tests
