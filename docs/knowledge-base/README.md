@@ -34,18 +34,19 @@ minimum set of stable references that let an agent:
 
 ## Repository map
 
-| Area                                       | What it contains                                                            | Why it matters                                               |
-| ------------------------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `docs/architecture/`                       | system context, container model, bounded contexts, data flows, threat model | architectural source of truth                                |
-| `docs/architecture/adr/`                   | decision records and decision boundaries                                    | explains what was approved and why                           |
-| `docs/application-deployment-contract.md`  | pointer to the authoritative `DEPLOYMENT_CONTRACT.md`                       | contract consumed by the deployment repository               |
-| `docs/contracts/`                          | example application profiles and contract examples                          | machine-readable contract inputs                             |
-| `docs/prompts/claude/DEPLOYMENT_PROMPT.md` | Claude Code adapter for deployment-contract work                            | how a Claude Code agent maintains and hands off the contract |
-| `docs/discovery/`                          | inventory, audits, discovery evidence                                       | historical facts and evidence snapshots                      |
-| `docs/operations/`                         | development, quality gates, observability and operational procedures        | repeatable operational behavior                              |
-| `docs/prompts/codex/`                      | Codex-specific prompt entry points and starter pack                         | agent-specific bootstrap                                     |
-| `docs/prompts/claude/`                     | Claude Code-specific prompt entry points and starter pack                   | agent-specific bootstrap                                     |
-| `docs/reports/`                            | phase reports and validation evidence                                       | execution trace and human review artifacts                   |
+| Area                                        | What it contains                                                            | Why it matters                                               |
+| ------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `docs/architecture/`                        | system context, container model, bounded contexts, data flows, threat model | architectural source of truth                                |
+| `docs/architecture/adr/`                    | decision records and decision boundaries                                    | explains what was approved and why                           |
+| `docs/knowledge-base/environment-matrix.md` | local/staging/production deployment matrix                                  | explicit environment differences and stable inputs           |
+| `docs/application-deployment-contract.md`   | pointer to the authoritative `DEPLOYMENT_CONTRACT.md`                       | contract consumed by the deployment repository               |
+| `docs/contracts/`                           | example application profiles and contract examples                          | machine-readable contract inputs                             |
+| `docs/prompts/claude/DEPLOYMENT_PROMPT.md`  | Claude Code adapter for deployment-contract work                            | how a Claude Code agent maintains and hands off the contract |
+| `docs/discovery/`                           | inventory, audits, discovery evidence                                       | historical facts and evidence snapshots                      |
+| `docs/operations/`                          | development, quality gates, observability and operational procedures        | repeatable operational behavior                              |
+| `docs/prompts/codex/`                       | Codex-specific prompt entry points and starter pack                         | agent-specific bootstrap                                     |
+| `docs/prompts/claude/`                      | Claude Code-specific prompt entry points and starter pack                   | agent-specific bootstrap                                     |
+| `docs/reports/`                             | phase reports and validation evidence                                       | execution trace and human review artifacts                   |
 
 ## Deployment handoff rule
 
