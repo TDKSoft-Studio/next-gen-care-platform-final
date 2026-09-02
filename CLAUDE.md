@@ -116,6 +116,12 @@ If a required action is ambiguous, destructive, provider-specific, legal/clinica
 For the stable repository entry points, contracts, operations, and deployment handoff rules, use
 [`docs/knowledge-base/README.md`](docs/knowledge-base/README.md) as the agent-facing index.
 
+For work that creates, maintains, validates, or hands off the application deployment
+contract, follow the Claude Code deployment adapter
+[`docs/prompts/claude/DEPLOYMENT_PROMPT.md`](docs/prompts/claude/DEPLOYMENT_PROMPT.md).
+It is subordinate to this file and to `DEPLOYMENT_CONTRACT.md`; it never restates the
+contract's factual content.
+
 ## Completion rule
 
 A green command is evidence only for that command and environment.
