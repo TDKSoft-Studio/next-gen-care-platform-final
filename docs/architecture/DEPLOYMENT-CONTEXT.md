@@ -1,6 +1,14 @@
-# Deployment and Infrastructure Context — Phase 0
+# Deployment and Infrastructure Context
 
-**Status:** observed repository topology plus unapproved target proposal. No cluster state was inspected.
+**Status:** observed repository topology plus unapproved target proposal. No
+cluster state was inspected. Updated 2026-09-02: the dedicated infrastructure
+repository now exists and acts as the deployment controller (see below); its
+internal structure has **not** been inspected from this repository.
+
+The authoritative, machine-consumable handoff is
+[`../application-deployment-contract.md`](../application-deployment-contract.md)
+and [`../contracts/application-profile.example.yaml`](../contracts/application-profile.example.yaml).
+This document only describes topology and boundaries.
 
 ## Observed appointment-repository topology
 
@@ -48,7 +56,25 @@ Evidence is in `nurse-appointment-scheduling-api/k8s`. The manifests are explici
 
 ## Dedicated infrastructure repository
 
-`/home/hkengne/projects/next-gen-care-infra` is empty and has no Git metadata. Therefore no existing NEXT GEN CARE platform convention can be inferred for Helm, Argo CD, environment overlays, IaC, DNS, certificates, policies, secrets, or backups.
+`next-gen-care-infra` is a **separate repository** that now exists and acts as
+the **deployment controller** for this application: it consumes
+`docs/application-deployment-contract.md` (plus
+`docs/contracts/application-profile.example.yaml` and the repository
+instructions) and translates them into the target environment via Helm / GitOps
+/ Argo CD. It is not authorized to invent runtime values that this application
+repository has not stated.
+
+The infrastructure repository's internal structure (its Helm chart, Argo CD
+model, environment overlays, its recorded application profile) has **not** been
+inspected from this repository, so no NEXT GEN CARE platform convention for those
+is asserted here. ADR-0011 continues to govern the repository boundary:
+application changes and infrastructure changes are not bundled, and
+cross-repository contract versions must be explicit and reproducible.
+
+Historical note: the Phase 0 inventory recorded this repository as empty with no
+Git metadata; its creation was authorized subsequently, and the pre-deployment
+control (`/ngc:prod-preflight`) run from the infrastructure side is what
+triggered production of the application deployment contract.
 
 ## Proposed target topology
 
@@ -105,7 +131,7 @@ Each environment needs separate configuration, secrets, domains, data stores, ac
 
 ## Required infrastructure evidence before implementation/deployment
 
-1. Human-approved repository boundary and creation/repair of a real Git repository.
+1. Human-approved repository boundary (ADR-0011) — satisfied; `next-gen-care-infra` exists as the separate deployment controller.
 2. Existing cluster inventory or explicit statement that no cluster conventions exist.
 3. Approved namespaces, ingress class, cert issuer, storage classes, network policies, pod-security posture, observability stack, and registry.
 4. Approved secrets mechanism and key rotation.
@@ -116,4 +142,9 @@ Each environment needs separate configuration, secrets, domains, data stores, ac
 
 ## Deployment stop conditions
 
-No deployment may proceed while the infrastructure repository is empty, providers are unapproved, contracts/privacy are unresolved, or explicit production authority is absent. Phase 0 performed no `kubectl`, `helm`, `argocd`, DNS, certificate, database, registry, or deployment mutation.
+No deployment may proceed while the application deployment contract is
+incomplete (`docs/application-deployment-contract.md` Section 24 still lists open
+decisions and contradictions that block production), providers are unapproved,
+contracts/privacy are unresolved, or explicit production authority is absent.
+This document's updates performed no `kubectl`, `helm`, `argocd`, DNS,
+certificate, database, registry, or deployment mutation.
