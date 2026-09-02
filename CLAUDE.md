@@ -119,7 +119,9 @@ For the stable repository entry points, contracts, operations, and deployment ha
 For work that creates, maintains, validates, or hands off the application deployment
 contract, follow the Claude Code deployment adapter
 [`docs/prompts/claude/DEPLOYMENT_PROMPT.md`](docs/prompts/claude/DEPLOYMENT_PROMPT.md).
-It is subordinate to this file and to `DEPLOYMENT_CONTRACT.md`; it never restates the
+It is subordinate to this file and to the authoritative contract
+[`docs/application-deployment-contract.md`](docs/application-deployment-contract.md)
+(root `DEPLOYMENT_CONTRACT.md` is a pointer to it); it never restates the
 contract's factual content.
 
 ## Completion rule

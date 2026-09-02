@@ -1,0 +1,319 @@
+# NEXT GEN CARE platform — application profile (EXAMPLE)
+#
+# Non-secret, non-deployable. This file mirrors, in a machine-readable shape, the
+# authoritative contract in docs/application-deployment-contract.md. It is an
+# EXAMPLE input for the infrastructure repository (next-gen-care-infra), not a
+# manifest and not an environment overlay.
+#
+# Rules:
+#   - no secret values, ever — only logical names and keys;
+#   - every value that this repository cannot evidence is set to the string
+#     "UNKNOWN — REQUIRES DECISION" or "UNKNOWN — REQUIRES MEASUREMENT";
+#   - if a field here disagrees with docs/application-deployment-contract.md, the
+#     Markdown contract wins and this file must be corrected.
+
+apiVersion: next-gen-care.infra/v1
+kind: ApplicationProfile
+
+metadata:
+  application: next-gen-care-platform
+  component: web
+  contractVersion: "1.1"
+  applicationVersion: "0.1.0"
+  contract: docs/application-deployment-contract.md
+  lastUpdated: "2026-09-02"
+  status: active-not-production-ready
+
+runtime:
+  language: nodejs
+  nodeVersion: "24.20.0"
+  packageManager: "pnpm@11.24.0"
+  framework: "next@16.3.3"
+  outputMode: standalone
+  cms: "payload@3.88.0"
+  baseImage: "node:24.20.0-bookworm-slim"
+  runsAsNonRoot: true
+  architectures:
+    - linux/x86_64
+  otherArchitectures: "UNKNOWN — REQUIRES DECISION" # decider: infra + Human Engineering Authority
+
+image:
+  source: Dockerfile
+  buildContext: "."
+  localBuildNames: # convenience only, never a promotion reference
+    - "next-gen-care-platform:ci"
+    - "next-gen-care-platform:phase-1"
+  registry: "UNKNOWN — REQUIRES DECISION" # decider: repo/org admin + Human Engineering Authority
+  publishedDigest: "UNKNOWN — REQUIRES DECISION" # no publish workflow exists yet (Contradiction #1)
+  release:
+    sourceRevision: "UNKNOWN — REQUIRES DECISION" # published commit/tag bound to the digest
+  promotion:
+    staging: by-digest
+    production: by-digest
+    mutableTagsForReleases: false
+    disallow: ["latest"]
+
+startup:
+  command: ["node", "apps/web/server.js"]
+  workingDir: /app
+  standaloneServerPath: apps/web/.next/standalone/apps/web/server.js
+  bakedEnv:
+    HOSTNAME: "0.0.0.0"
+    NODE_ENV: production
+    PORT: "3000"
+    NEXT_TELEMETRY_DISABLED: "1"
+  approximateStartupSeconds: "UNKNOWN — REQUIRES MEASUREMENT" # decider: infra (container run)
+
+network:
+  containerPort: 3000
+  protocol: http
+  bindInterface: "0.0.0.0"
+  websocket: false
+  dockerHealthcheck: false
+  rootPathBehavior: "HTTP 307 redirect to /fr or /nl (locale negotiated)"
+  paths:
+    public: ["/", "/fr", "/nl", "/fr/*", "/nl/*"]
+    admin: ["/admin"]
+    api: ["/api/*", "/api/home-care/*", "/api/preview"]
+    health: ["/health/live", "/health/ready"] # not locale-prefixed
+
+health:
+  liveness:
+    path: /health/live
+    method: GET
+    expectStatus: 200
+    expectBody: '{"status":"ok"}'
+    headers:
+      Cache-Control: no-store
+    checksDependencies: false
+  readiness:
+    path: /health/ready
+    method: GET
+    expectStatus: 200
+    degradedStatus: 503 # only when DATABASE_URL is set and the DB is unreachable
+    bodyShape: '{ "checks": { "application": "ready", "database": "ready|not-configured|unreachable" }, "status": "ok|degraded" }'
+    headers:
+      Cache-Control: no-store
+    dependencyProbe:
+      type: postgres
+      connectionTimeoutMs: 2000
+      skippedWhenUnset: DATABASE_URL
+  startupProbe:
+    dedicatedEndpoint: false
+  probeTiming: "UNKNOWN — REQUIRES DECISION" # initialDelay/period/failureThreshold — decider: infra
+
+env:
+  # required flags are for PRODUCTION; "conditional" is explained in the contract
+  - name: DATABASE_URL
+    required: conditional # required for CMS/admin
+    secret: true
+  - name: PAYLOAD_SECRET
+    required: conditional # required when CMS/admin is enabled
+    secret: true
+  - name: PREVIEW_SECRET
+    required: "UNKNOWN — REQUIRES DECISION" # Contradiction #2
+    secret: true
+  - name: NEXT_PUBLIC_SERVER_URL
+    required: conditional # required if preview links are used
+    secret: false
+  - name: NEXT_PUBLIC_SITE_URL
+    required: conditional # required when public indexing is enabled
+    secret: false
+  - name: PUBLIC_SEO_ENABLED
+    required: false
+    secret: false
+    default: "false"
+  - name: APPOINTMENT_API_URL
+    required: conditional # required for home-care features
+    secret: false
+    constraint: "scheme must be https: OR hostname must be exactly localhost (Contradiction #5)"
+  - name: NODE_ENV
+    required: false
+    secret: false
+    default: production
+  - name: HOSTNAME
+    required: false
+    secret: false
+    default: "0.0.0.0"
+  - name: PORT
+    required: false
+    secret: false
+    default: "3000"
+  - name: NEXT_TELEMETRY_DISABLED
+    required: false
+    secret: false
+    default: "1"
+
+secrets:
+  # logical names + keys only — NEVER values
+  targetSecretName: "UNKNOWN — REQUIRES DECISION" # infra owns the Secret name/shape
+  items:
+    - logicalName: DATABASE_URL
+      keys: ["connection-string"]
+      required: conditional
+      whenAbsent: "CMS/DB features unavailable; readiness reports not-configured"
+    - logicalName: PAYLOAD_SECRET
+      keys: ["value"]
+      required: conditional
+      whenAbsent: "admin/CMS runtime unusable"
+    - logicalName: PREVIEW_SECRET
+      keys: ["value"]
+      required: "UNKNOWN — REQUIRES DECISION"
+      whenAbsent: "/api/preview returns 404 for all callers"
+
+dependencies:
+  required:
+    - name: postgresql
+      required: conditional # for CMS/admin persistence
+      protocol: postgres
+      reference: env:DATABASE_URL
+      defaultPort: 5432
+      startupDependency: whenConfigured
+      failureImpact: "admin/CMS unavailable; readiness 503/degraded if configured-but-unreachable"
+    - name: appointment-api
+      required: conditional # for /api/home-care/*
+      protocol: https # http only accepted when host is localhost (Contradiction #5)
+      reference: env:APPOINTMENT_API_URL
+      startupDependency: false
+      failureImpact: "home-care routes return 502/503 with {status,code,detail}; no crash"
+      upstreamPaths:
+        - "GET /api/v1/services"
+        - "GET /api/v1/locations"
+        - "GET /api/v1/availability"
+        - "POST /api/v1/appointment-requests" # expects 202
+      upstreamTimeoutMs: 8000
+  # each UNKNOWN — REQUIRES DECISION, decider: Human Engineering Authority via ADR
+  notSelected:
+    - smtp-email
+    - external-identity-provider
+    - object-storage-cdn
+    - message-broker
+    - analytics
+    - metrics-tracing-alerting-backend
+
+persistence:
+  postgres:
+    required: conditional
+    minVersion: "UNKNOWN — REQUIRES DECISION" # decider: infra
+    minVolumeSize: "UNKNOWN — REQUIRES MEASUREMENT"
+    backup: "UNKNOWN — REQUIRES DECISION" # decider: infra (ADR-0010)
+  media:
+    mechanism: filesystem
+    mountPath: /app/media
+    requiredWhen: "CMS media uploads are used"
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp", "image/avif", "application/pdf"]
+    writesDerivatives: true # thumbnail 480x320 on upload
+    volumeSize: "UNKNOWN — REQUIRES DECISION" # decider: infra + content owner
+    accessMode: "ReadWriteOnce (single replica); ReadWriteMany or externalized for multi-replica"
+    storageClass: "UNKNOWN — REQUIRES DECISION"
+
+database:
+  engine: postgresql
+  adapter: "@payloadcms/db-postgres@3.88.0"
+  migrationFilesInRepo: false
+  migrationMechanism: "UNKNOWN — REQUIRES DECISION" # auto-push vs generated migrations (Contradiction #9)
+  destructiveMigrationPolicy: "UNKNOWN — REQUIRES DECISION"
+
+resources:
+  cpuRequest: "UNKNOWN — REQUIRES MEASUREMENT"
+  cpuLimit: "UNKNOWN — REQUIRES MEASUREMENT"
+  memoryRequest: "UNKNOWN — REQUIRES MEASUREMENT"
+  memoryLimit: "UNKNOWN — REQUIRES MEASUREMENT"
+  gpu: false
+
+scaling:
+  model: stateless-web-tier
+  externalState: ["postgres", "media-volume"]
+  sessionAffinity: false
+  backgroundWorkers: false
+  leaderElection: false
+  replicasMin: "UNKNOWN — REQUIRES DECISION" # decider: infra + Human Engineering Authority
+  replicasMax: "UNKNOWN — REQUIRES DECISION"
+  strategy: "UNKNOWN — REQUIRES DECISION" # Recreate vs RollingUpdate; filesystem media couples this to volume access mode
+  pdb: "UNKNOWN — REQUIRES DECISION"
+  hpa: "UNKNOWN — REQUIRES DECISION"
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  allowPrivilegeEscalation: false
+  capabilitiesDrop: ["ALL"]
+  seccompProfile: RuntimeDefault
+  readOnlyRootFilesystem: "UNKNOWN — REQUIRES VALIDATION" # Contradiction #6
+  writablePathsIfReadOnlyRoot:
+    - /app/.next/cache # emptyDir
+    - /tmp # emptyDir
+    - /app/media # real volume, only when CMS media is enabled
+
+httpSecurityHeaders: # always-on, asserted by the application (informational for infra)
+  Content-Security-Policy: "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:"
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: "camera=(), geolocation=(), microphone=()"
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Strict-Transport-Security: "max-age=63072000; includeSubDomains (production only)"
+
+exposure:
+  external: true
+  externalProtocol: https
+  internalProtocol: http
+  tlsTerminatedBy: infrastructure
+  approvedDnsZone: nextgen-cares.org # NEXT_GEN_CARE_MASTER_ENGINEERING_PROMPT.md §5.1
+  canonicalHost: "UNKNOWN — REQUIRES DECISION" # apex vs www + redirect (Contradiction #4) — decider: Human Engineering Authority
+  ingressClass: "UNKNOWN — REQUIRES DECISION" # decider: infra
+  maxRequestBodySize: "UNKNOWN — REQUIRES DECISION" # must fit CMS media uploads when /admin is exposed
+  reservedSubdomains:
+    ["admin.nextgen-cares.org", "booking.nextgen-cares.org", "api.nextgen-cares.org"]
+
+observability:
+  telemetryPackage: packages/observability
+  traceIdFormat: "32 lowercase hex chars"
+  metricsEndpoint: "UNKNOWN — REQUIRES DECISION"
+  tracingBackend: "UNKNOWN — REQUIRES DECISION"
+  alertingBackend: "UNKNOWN — REQUIRES DECISION"
+
+successCriteria:
+  - "container starts and stays up"
+  - 'GET /health/live -> 200 {"status":"ok"}'
+  - "GET /health/ready -> 200 status=ok in the intended mode"
+  - "listening on 3000"
+  - "GET / -> 307 to /fr or /nl"
+  - 'GET /fr -> 200 containing <html lang="fr">'
+  - "security headers present on /fr (CSP frame-ancestors 'none', Referrer-Policy no-referrer, prod HSTS max-age=63072000)"
+  - "configured dependencies reachable (postgres when DATABASE_URL set; appointment API when APPOINTMENT_API_URL set)"
+  - "GET /admin serves the Payload login when the CMS is enabled"
+  - "GET /api/home-care/catalog returns 200 or a clean {status,code,detail} 502/503"
+
+rollback:
+  imageRollback: by-previous-digest
+  triggers:
+    - "container start fails / crash-loops"
+    - "/health/live fails"
+    - "/health/ready stays 503/degraded from an unexpected outage"
+    - "a success-criteria smoke test fails"
+    - "incompatible schema/migration change"
+    - "abnormal error rate correlated with the release"
+  dataRollbackLimits: "DB/media changes may not be auto-reversible; an incompatible Payload/Postgres schema change may need a DB restore from backup"
+  mechanismOwner: infrastructure
+
+supplyChain:
+  ci: .github/workflows/ci.yml
+  sbom:
+    format: CycloneDX
+    specVersion: "1.6"
+    generator: "@cyclonedx/cdxgen@12.8.4"
+    artifact: sbom-cyclonedx # .artifacts/sbom.cdx.json
+  containerScan:
+    tool: trivy
+    severities: ["HIGH", "CRITICAL"]
+    ignoreUnfixed: true
+  dependencyAudit: "pnpm audit --prod --audit-level high"
+  imageSigningProvenance: "UNKNOWN — REQUIRES DECISION" # none today
+  gitHubAdvancedSecurity: "removed pending a plan/billing decision (see docs/operations/QUALITY-GATES.md)"
+
+openDecisions:
+  # consolidated pointer to docs/application-deployment-contract.md Section 24
+  registry: "docs/application-deployment-contract.md#24-open-decisions-and-contradictions-register"
+  blocksProduction: true

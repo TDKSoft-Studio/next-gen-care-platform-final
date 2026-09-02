@@ -1,15 +1,20 @@
 # CLAUDE CODE TRIGGER — NEXT GEN CARES — DEPLOYMENT CONTRACT
 
 > Claude Code adapter for work on the **application deployment contract**.
-> This is the Claude Code counterpart of the Codex-track deployment work that
-> produced [`DEPLOYMENT_CONTRACT.md`](../../../DEPLOYMENT_CONTRACT.md). It must
-> stay behaviorally equivalent to any Codex/`AGENTS.md`-driven equivalent;
-> neither adapter may weaken the rules below.
+> It must stay behaviorally equivalent to any Codex/`AGENTS.md`-driven
+> equivalent; neither adapter may weaken the rules below.
+>
+> The authoritative contract is
+> [`docs/application-deployment-contract.md`](../../application-deployment-contract.md),
+> with a machine-readable example at
+> [`docs/contracts/application-profile.example.yaml`](../../contracts/application-profile.example.yaml).
+> The root file [`DEPLOYMENT_CONTRACT.md`](../../../DEPLOYMENT_CONTRACT.md) is a
+> one-line pointer to it.
 >
 > This file is an **adapter**, not the contract. It never restates, overrides,
-> or duplicates the factual content of `DEPLOYMENT_CONTRACT.md`. If a fact about
-> the application (ports, env vars, health endpoints, image, dependencies) is
-> needed, read it from the contract — do not copy it here, because a copy drifts.
+> or duplicates the contract's factual content. If a fact about the application
+> (ports, env vars, health endpoints, image, dependencies) is needed, read it
+> from the contract — do not copy it here, because a copy drifts.
 
 ---
 
@@ -21,7 +26,8 @@ deployment contract for the NEXT GEN CARES platform.
 
 Typical tasks under this adapter:
 
-- extend or correct `DEPLOYMENT_CONTRACT.md` from new repository evidence;
+- extend or correct `docs/application-deployment-contract.md` from new
+  repository evidence;
 - resolve `UNKNOWN — REQUIRES DECISION` / `UNKNOWN — REQUIRES MEASUREMENT`
   markers once a human decision or a measurement exists;
 - verify that the contract still matches the code (`Dockerfile`, health routes,
@@ -33,7 +39,7 @@ This prompt is subordinate to the authoritative sources, in this order:
 
 1. `NEXT_GEN_CARE_MASTER_ENGINEERING_PROMPT.md`
 2. `CLAUDE.md`
-3. `DEPLOYMENT_CONTRACT.md` (authoritative application deployment contract)
+3. `docs/application-deployment-contract.md` (authoritative application deployment contract)
 4. `docs/knowledge-base/README.md` (deployment handoff rule and repository map)
 
 Read 1–3 completely before acting. If any is not already in context, read it
@@ -46,9 +52,9 @@ conversation memory.
 
 ### Contract-presence gate
 
-`DEPLOYMENT_CONTRACT.md` is the source of truth for the infrastructure handoff.
-If, on the working branch, the contract is **missing, incomplete, ambiguous,
-obsolete, or contradictory**:
+`docs/application-deployment-contract.md` is the source of truth for the
+infrastructure handoff. If, on the working branch, the contract is **missing,
+incomplete, ambiguous, obsolete, or contradictory**:
 
 - stop;
 - state precisely what is missing or inconsistent;
@@ -85,7 +91,7 @@ end of the phase, stop and produce the mandatory French phase report.
 
 ## Evidence discipline for the contract
 
-Every value written into `DEPLOYMENT_CONTRACT.md` must be one of:
+Every value written into `docs/application-deployment-contract.md` must be one of:
 
 - **Observed** — traceable to a specific file, command output, or diff in this
   repository. Cite the source in the working notes / phase report.
@@ -113,11 +119,13 @@ evidence trail stays in the transcript.
   - documentation-only correction with no contract impact → increment the
     **patch** version.
 - Update the `Last updated` date and add a changelog line for every change.
-- Keep the pointer file `docs/application-deployment-contract.md` and the
-  `docs/knowledge-base/README.md` repository map consistent with any rename or
-  move of the contract.
+- Keep the root pointer `DEPLOYMENT_CONTRACT.md`, the example profile
+  `docs/contracts/application-profile.example.yaml`, and the
+  `docs/knowledge-base/README.md` repository map consistent with any change to
+  the contract.
 - Do not split the contract's authoritative content across multiple files; the
-  pointer and this adapter reference it, they do not shadow it.
+  root pointer, the example profile, and this adapter reference it, they do not
+  shadow it.
 
 ---
 
